@@ -4,7 +4,7 @@ import { IFormStruct } from '../../models';
 import { Store } from '@ngrx/store';
 import { map, distinctUntilChanged } from 'rxjs/operators';
 import { STORE_NAME, IState } from '../../models/common.interface';
-import { DetailReset } from '../../actions/actions';
+import { DetailReset } from '../../actions/data.actions';
 
 @Component({
     selector: 'df-form-toolbar',

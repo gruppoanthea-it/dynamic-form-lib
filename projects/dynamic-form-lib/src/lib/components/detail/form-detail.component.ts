@@ -1,4 +1,4 @@
-import { DetailUpdated, DetailReset } from './../../actions/actions';
+import { DetailUpdated, DetailReset } from '../../actions/data.actions';
 import { Component, OnInit} from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import { FormGroup, FormControl } from '@angular/forms';

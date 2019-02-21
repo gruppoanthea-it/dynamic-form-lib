@@ -1,5 +1,5 @@
 import { Action } from '@ngrx/store';
-import { ActionTypes, SchemaError, SchemaSuccess } from '../actions/actions';
+import { ActionTypes, SchemaError, SchemaSuccess } from '../actions/data.actions';
 import { IFormStruct } from '../models';
 
 const initialState: ISchemaState = {

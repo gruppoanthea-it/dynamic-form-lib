@@ -1,4 +1,4 @@
-import { ListSelectedRow } from './../../actions/actions';
+import { ListSelectedRow } from '../../actions/data.actions';
 import { Component, OnInit, Input } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { IFormStruct } from '../../models';
