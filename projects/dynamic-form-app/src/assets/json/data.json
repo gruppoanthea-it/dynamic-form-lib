@@ -1,0 +1,18 @@
+[
+    {
+        "username": "Prova",
+        "password": "Test",
+        "check": false,
+        "radio": "1",
+        "autocomplete": "Barletta",
+        "select": ["AL", "BL"]
+    },
+    {
+        "username": "Prova 1",
+        "password": "Test",
+        "check": true,
+        "radio": "2",
+        "autocomplete": "Alessandria",
+        "select": ["BL"]
+    }
+]
