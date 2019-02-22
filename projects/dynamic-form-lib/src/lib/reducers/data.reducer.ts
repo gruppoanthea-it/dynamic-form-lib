@@ -5,6 +5,7 @@ const initialState: IDataState = {
     loading: false,
     loaded: false,
     data: null,
+    originalData: null,
     error: null
 };
 
@@ -14,17 +15,20 @@ export function reducerData(state = initialState, action: DataActions) {
         if (state.loading) {
             return state;
         }
-        return {...state, loading: true, loaded: false, data: null, error: null };
+        return {...state, loading: true, loaded: false, data: null, originalData: null,
+             error: null };
     case ActionTypes.DATA_ERROR:
         if (state.error && state.error === action.error) {
             return state;
         }
-        return {...state, loading: false, loaded: false, data: null, error: action.error};
+        return {...state, loading: false, loaded: false, data: null, originalData: null,
+             error: action.error};
     case ActionTypes.DATA_SUCCESS:
         if (state.loaded) {
             return state;
         }
-        return {...state, loading: false, loaded: true, data: action.data};
+        return {...state, loading: false, loaded: true, data: action.data,
+             originalData: action.data, error: null};
     default:
       return state;
   }
@@ -34,5 +38,6 @@ export interface IDataState {
     loading: boolean;
     loaded: boolean;
     data: any[];
+    originalData: any[];
     error: string;
 }

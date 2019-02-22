@@ -5,10 +5,11 @@ import { InvalidStructError, InvalidSchemaRetrieveError } from './models/excepti
 import { Observable } from 'rxjs';
 import { map, distinctUntilChanged } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
-import { SchemaFetch, SchemaSuccess, DataFetch, DataSuccess } from './actions/data.actions';
+import { DataFetch, DataSuccess } from './actions/data.actions';
 import { HttpClient, HttpRequest, HttpEvent, HttpEventType } from '@angular/common/http';
 import { SchemaRetrieve } from './models/schema.retrieve';
 import { DataRetrieve } from './models/data.retrieve';
+import { SchemaFetch, SchemaSuccess } from './actions/schema.actions';
 
 @Component({
   selector: 'df-dynamic-form',

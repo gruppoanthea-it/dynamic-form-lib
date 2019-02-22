@@ -1,6 +1,6 @@
-import { Action } from '@ngrx/store';
-import { ActionTypes, SchemaError, SchemaSuccess } from '../actions/data.actions';
 import { IFormStruct } from '../models';
+import { SchemaActions } from '../actions/schema.actions';
+import { ActionTypes } from '../actions/types';
 
 const initialState: ISchemaState = {
     loading: false,
@@ -9,7 +9,7 @@ const initialState: ISchemaState = {
     error: null
 };
 
-export function reducerSchema(state = initialState, action: Action) {
+export function reducerSchema(state = initialState, action: SchemaActions) {
   switch (action.type) {
     case ActionTypes.SCHEMA_FETCH:
         if (state.loading) {
@@ -17,15 +17,15 @@ export function reducerSchema(state = initialState, action: Action) {
         }
         return {...state, loading: true, loaded: false, data: null };
     case ActionTypes.SCHEMA_ERROR:
-        if (state.error && state.error === (<SchemaError>action).error) {
+        if (state.error && state.error === action.error) {
             return state;
         }
-        return {...state, loading: false, loaded: false, data: null, error: (<SchemaError>action).error};
+        return {...state, loading: false, loaded: false, data: null, error: action.error};
     case ActionTypes.SCHEMA_SUCCESS:
         if (state.loaded) {
             return state;
         }
-        return {...state, loading: false, loaded: true, data: (<SchemaSuccess>action).schema};
+        return {...state, loading: false, loaded: true, data: action.schema};
     default:
       return state;
   }

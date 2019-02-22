@@ -1,6 +1,5 @@
-import { Action } from '@ngrx/store';
-import { ActionTypes, ListSelectedRow } from '../actions/data.actions';
-import { ListActions } from '../actions/list.actions';
+import { ListActions, ListCommandTypes, ListCommandChangeRow } from '../actions/list.actions';
+import { ActionTypes } from '../actions/types';
 
 const initialState: IListState = {
     selectedRow: 0
@@ -8,17 +7,18 @@ const initialState: IListState = {
 
 export function reducerList(state = initialState, action: ListActions) {
   switch (action.type) {
-    case ActionTypes.LIST_SELECTED_ROW:
-        if (state.selectedRow === (<ListSelectedRow>action).row) {
-            return state;
+    case ActionTypes.LIST_COMMAND:
+        switch(action.command.type) {
+            case ListCommandTypes.CHANGE_ROW:
+                return {...state, selectedRow: (<ListCommandChangeRow>action.command).index};
+            default:
+                return state;
         }
-        return {...state, selectedRow: (<ListSelectedRow>action).row};
     default:
       return state;
   }
 }
 
 export interface IListState {
-    data: any[];
     selectedRow: number;
 }
