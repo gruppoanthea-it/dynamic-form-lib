@@ -1,15 +1,16 @@
-import { STORE_NAME, IState } from './models/common.interface';
+import { LibraryState, STORE_NAME, SchemaData } from './models/store.interface';
 import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
 import { IFormStruct } from './models/form-struct/form-struct.interface';
 import { InvalidStructError, InvalidSchemaRetrieveError } from './models/exceptions';
 import { Observable } from 'rxjs';
 import { map, distinctUntilChanged } from 'rxjs/operators';
-import { Store } from '@ngrx/store';
+import { Store, select } from '@ngrx/store';
 import { DataFetch, DataSuccess } from './actions/data.actions';
 import { HttpClient, HttpRequest, HttpEvent, HttpEventType } from '@angular/common/http';
 import { SchemaRetrieve } from './models/schema.retrieve';
 import { DataRetrieve } from './models/data.retrieve';
 import { SchemaFetch, SchemaSuccess } from './actions/schema.actions';
+import { getSchema } from './reducers/selectors';
 
 @Component({
   selector: 'df-dynamic-form',
@@ -61,7 +62,7 @@ export class DynamicFormLibComponent implements OnInit {
     private tabIndex: number;
     private loadingSchema: boolean;
 
-    constructor(private http: HttpClient, private store: Store<IState>) {
+    constructor(private http: HttpClient, private store: Store<LibraryState>) {
         this.loadingSchema = true;
     }
 
@@ -71,72 +72,16 @@ export class DynamicFormLibComponent implements OnInit {
             throw new InvalidSchemaRetrieveError('Missing informations to retrieve schema');
         }
         // Check when finish loading
-        this.store.select(STORE_NAME)
-            .pipe(map((state: IState) => state.schema), distinctUntilChanged())
+        this.store.pipe(select(getSchema))
             .subscribe((value) => {
                 this.loadingSchema = value.loading;
                 if (value.loaded) {
-                    this.schema = value.data;
+                    this.schema = value.item;
                     this.validateSchema();
                 }
             });
-        this.store.dispatch(new SchemaFetch());
-        const schemaRequest = this.getSchemaObservable();
-        const dataRequest = this.getDataObservable();
-        this.getSchema(schemaRequest);
-        if (dataRequest) {
-            this.store.dispatch(new DataFetch());
-            this.getData(dataRequest);
-        }
-    }
-
-    private getSchemaObservable() {
-        // Creo la richiesta per lo schema
-        const schemaRequestDef = new HttpRequest(this.schemaRetrieve.request.method,
-            this.schemaRetrieve.request.url, null, {
-                headers: this.schemaRetrieve.request.headers
-            });
-        if (this.schemaRetrieve.onGetSchema) {
-            this.schemaRetrieve.onGetSchema(schemaRequestDef);
-        }
-        // Creo l'observable per la richiesta dello schema
-        return this.http.request(schemaRequestDef);
-    }
-
-    private getDataObservable() {
-        if (!this.dataRetrieve) {
-            return null;
-        }
-        // Creo la richiesta per i dati
-        const dataRequestDef = new HttpRequest(this.dataRetrieve.request.method,
-            this.dataRetrieve.request.url, null, {
-                headers: this.dataRetrieve.request.headers
-            });
-        if (this.dataRetrieve.onGetData) {
-            this.dataRetrieve.onGetData(dataRequestDef);
-        }
-        // Creo l'observable per la richiesta dei dati
-        return this.http.request(dataRequestDef);
-    }
-
-    private getSchema(request: Observable<HttpEvent<any>>) {
-        request.subscribe((value) => {
-            if (value.type === HttpEventType.Response) {
-                if (value.status === 200) {
-                    this.store.dispatch(new SchemaSuccess(value.body));
-                }
-            }
-        });
-    }
-
-    private getData(request: Observable<HttpEvent<any>>) {
-        request.subscribe((value) => {
-            if (value.type === HttpEventType.Response) {
-                if (value.status === 200) {
-                    this.store.dispatch(new DataSuccess(value.body));
-                }
-            }
-        });
+        this.store.dispatch(new SchemaFetch(this.schemaRetrieve));
+        this.store.dispatch(new DataFetch(this.dataRetrieve));
     }
 
     private validateSchema = () => {

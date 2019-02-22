@@ -1,10 +1,10 @@
 import { DynamicFormService } from '../../services/dynamic-form.service';
 import { Component, OnInit, Output, Input, EventEmitter } from '@angular/core';
 import { IFormStruct } from '../../models';
-import { Store } from '@ngrx/store';
+import { Store, select } from '@ngrx/store';
 import { map, distinctUntilChanged } from 'rxjs/operators';
-import { STORE_NAME, IState } from '../../models/common.interface';
-import { DetailReset } from '../../actions/data.actions';
+import { LibraryState } from '../../models/store.interface';
+import { getSchema } from '../../reducers/selectors';
 
 @Component({
     selector: 'df-form-toolbar',
@@ -35,36 +35,35 @@ export class FormToolbarComponent implements OnInit {
     private isFormModified: boolean;
 
     constructor(private dynamicFormService: DynamicFormService,
-                private store: Store<IState>) {
+                private store: Store<LibraryState>) {
         this.changeView = new EventEmitter();
         this.isFormModified = false;
     }
 
     ngOnInit() {
-        this.store.select(STORE_NAME)
-            .pipe(map((state: IState) => state.schema), distinctUntilChanged())
+        this.store.pipe(select(getSchema))
             .subscribe((value) => {
                 if (value.loaded) {
-                    this.formSchema = value.data;
+                    this.formSchema = value.item;
                     this.initToolbar();
                 }
             });
-        this.store.select(STORE_NAME)
-            .pipe(map((state: IState) => state.detail), distinctUntilChanged())
-            .subscribe((value) => {
-                this.isFormModified = value.updated;
-            });
+        // this.store.select(STORE_NAME)
+        //     .pipe(map((state: IState) => state.detail), distinctUntilChanged())
+        //     .subscribe((value) => {
+        //         this.isFormModified = value.updated;
+        //     });
     }
 
     private initToolbar() {
-        if (this.formSchema) {
-            this.dynamicFormService.isFormModified().subscribe((modified) => {
-                this.isFormModified = modified;
-            });
-        }
+        // if (this.formSchema) {
+        //     this.dynamicFormService.isFormModified().subscribe((modified) => {
+        //         this.isFormModified = modified;
+        //     });
+        // }
     }
 
     resetFormCommand() {
-        this.store.dispatch(new DetailReset(true));
+        // this.store.dispatch(new DetailReset(true));
     }
 }

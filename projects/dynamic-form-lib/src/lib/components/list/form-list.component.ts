@@ -1,10 +1,10 @@
-import { ListSelectedRow } from '../../actions/data.actions';
-import { Component, OnInit, Input } from '@angular/core';
+import { getAllItems } from './../../reducers/selectors';
+import { LibraryState } from './../../models/store.interface';
+import { Component, OnInit } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { IFormStruct } from '../../models';
-import { Store } from '@ngrx/store';
-import { STORE_NAME, IState } from '../../models/common.interface';
-import { map, distinctUntilChanged } from 'rxjs/operators';
+import { Store, select } from '@ngrx/store';
+import { getSchema } from '../../reducers/selectors';
 
 @Component({
     selector: 'df-form-list',
@@ -16,7 +16,7 @@ import { map, distinctUntilChanged } from 'rxjs/operators';
         </ng-container>
         <tr mat-header-row *matHeaderRowDef="columns; sticky: true"></tr>
         <tr mat-row [ngClass]="i === selectedRow ? 'mat-row-selected' : ''"
-        *matRowDef="let row; columns: columns;let i = index" (click)="rowClicked(i)"></tr>
+        *matRowDef="let row; columns: columns;let i = index" (click)="rowClicked(row)"></tr>
     </table>
     `,
     styles: [`
@@ -31,36 +31,30 @@ import { map, distinctUntilChanged } from 'rxjs/operators';
 export class FormListComponent implements OnInit {
 
     formSchema: IFormStruct;
-    data: any[];
+    data: {
+        [key: string]: any;
+    };
 
     private columns: string[];
     private selectedRow: number;
 
     constructor(private mediaObserver: MediaObserver,
-                private store: Store<IState>) {
+                private store: Store<LibraryState>) {
         this.columns = [];
     }
 
     ngOnInit() {
-        this.store.select(STORE_NAME)
-            .pipe(map((state: IState) => state.schema), distinctUntilChanged())
+        this.store.pipe(select(getSchema))
             .subscribe((value) => {
                 if (value.loaded) {
-                    this.formSchema = value.data;
+                    this.formSchema = value.item;
                     this.init();
                 }
             });
-        this.store.select(STORE_NAME)
-            .pipe(map((state: IState) => state.data), distinctUntilChanged())
-            .subscribe((value) => {
-                if (value.loaded) {
-                    this.data = value.data;
-                }
-            });
-        this.store.select(STORE_NAME)
-            .pipe(map((state: IState) => state.list), distinctUntilChanged())
-            .subscribe((value) => {
-                this.selectedRow = value.selectedRow;
+        this.store.pipe(select(getAllItems))
+            .subscribe(value => {
+                this.data = value;
+                console.log(value);
             });
     }
 
@@ -70,8 +64,8 @@ export class FormListComponent implements OnInit {
         });
     }
 
-    rowClicked(index) {
-        this.store.dispatch(new ListSelectedRow(index));
+    rowClicked(row) {
+        console.log(row);
     }
 
 }

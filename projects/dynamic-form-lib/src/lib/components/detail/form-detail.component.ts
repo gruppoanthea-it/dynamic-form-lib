@@ -1,12 +1,11 @@
+import { getSchema, getSelectedItem } from './../../reducers/selectors';
 import { Component, OnInit} from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import { FormGroup, FormControl } from '@angular/forms';
 import { MediaObserver, MediaChange } from '@angular/flex-layout';
-import { STORE_NAME, IState } from '../../models/common.interface';
 import { IFormStruct } from '../../models';
-import { DynamicFormService } from '../../services/dynamic-form.service';
 import { deepCopy, equals } from '../../utility/utility.functions';
-import { map, distinctUntilChanged } from 'rxjs/operators';
+import { LibraryState } from '../../models/store.interface';
 
 @Component({
     selector: 'df-form-detail',
@@ -39,8 +38,7 @@ export class FormDetailComponent implements OnInit {
     private currentBP: string;
 
     constructor(private mediaObserver: MediaObserver,
-         private dynamicFormService: DynamicFormService,
-         private store: Store<IState>) {
+         private store: Store<LibraryState>) {
         this.mediaObserver.media$.subscribe((media: MediaChange) => {
             this.currentBP = media.mqAlias;
             this.adjustGrid();
@@ -49,30 +47,18 @@ export class FormDetailComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.store.select(STORE_NAME)
-            .pipe(map((state: IState) => state.schema), distinctUntilChanged())
+        this.store.pipe(select(getSchema))
             .subscribe((value) => {
                 if (value.loaded) {
-                    this.formSchema = value.data;
+                    this.formSchema = value.item;
                     this.initForm();
                 }
             });
-        this.store.select(STORE_NAME)
-            .pipe(map((state: IState) => {
-                return {
-                    data: state.data,
-                    row: state.list ? state.list.selectedRow : 0
-                };
-            })
-            , distinctUntilChanged())
-            .subscribe((value) => {
-                if (value.data.loaded) {
-                    console.log('Data changed');
-                    if (value.data.data.length > 0) {
-                        this.data = value.data.data[value.row];
-                        this.parseData();
-                    }
-                }
+        this.store.pipe(select(getSelectedItem))
+            .subscribe(value => {
+                console.log('selected item', value);
+                this.data = value;
+                this.parseData();
             });
     }
 
@@ -130,7 +116,7 @@ export class FormDetailComponent implements OnInit {
                     }
                 }
                 const updated = equals(this.data, this.originalData);
-                this.store.dispatch(new DetailUpdated(updated));
+                // this.store.dispatch(new DetailUpdated(updated));
             }
         });
     }

@@ -1,12 +1,11 @@
-import { IFormStruct } from '../models';
+import { SchemaData } from './../models/store.interface';
 import { SchemaActions } from '../actions/schema.actions';
 import { ActionTypes } from '../actions/types';
 
-const initialState: ISchemaState = {
+const initialState: SchemaData = {
     loading: false,
     loaded: false,
-    data: null,
-    error: null
+    item: null
 };
 
 export function reducerSchema(state = initialState, action: SchemaActions) {
@@ -15,25 +14,18 @@ export function reducerSchema(state = initialState, action: SchemaActions) {
         if (state.loading) {
             return state;
         }
-        return {...state, loading: true, loaded: false, data: null };
+        return {...state, loading: true, loaded: false, item: null };
     case ActionTypes.SCHEMA_ERROR:
-        if (state.error && state.error === action.error) {
+        if (!state.loading) {
             return state;
         }
-        return {...state, loading: false, loaded: false, data: null, error: action.error};
+        return {...state, loading: false, loaded: false, item: null};
     case ActionTypes.SCHEMA_SUCCESS:
         if (state.loaded) {
             return state;
         }
-        return {...state, loading: false, loaded: true, data: action.schema};
+        return {...state, loading: false, loaded: true, item: action.item};
     default:
       return state;
   }
-}
-
-export interface ISchemaState {
-    loading: boolean;
-    loaded: boolean;
-    data: IFormStruct;
-    error: string;
 }

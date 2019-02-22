@@ -1,12 +1,12 @@
+import { EntityData } from './../models/store.interface';
 import { DataActions } from './../actions/data.actions';
 import { ActionTypes } from '../actions/types';
 
-const initialState: IDataState = {
+const initialState: EntityData = {
     loading: false,
     loaded: false,
-    data: null,
-    originalData: null,
-    error: null
+    items: null,
+    original: null
 };
 
 export function reducerData(state = initialState, action: DataActions) {
@@ -15,29 +15,14 @@ export function reducerData(state = initialState, action: DataActions) {
         if (state.loading) {
             return state;
         }
-        return {...state, loading: true, loaded: false, data: null, originalData: null,
-             error: null };
-    case ActionTypes.DATA_ERROR:
-        if (state.error && state.error === action.error) {
-            return state;
-        }
-        return {...state, loading: false, loaded: false, data: null, originalData: null,
-             error: action.error};
+        return {...state, loading: true, loaded: false, items: null, original: null};
     case ActionTypes.DATA_SUCCESS:
         if (state.loaded) {
             return state;
         }
-        return {...state, loading: false, loaded: true, data: action.data,
-             originalData: action.data, error: null};
+        return {...state, loading: false, loaded: true, items: action.items,
+             original: action.items};
     default:
       return state;
   }
-}
-
-export interface IDataState {
-    loading: boolean;
-    loaded: boolean;
-    data: any[];
-    originalData: any[];
-    error: string;
 }

@@ -5,6 +5,7 @@ import { AppComponent } from './app.component';
 import { DynamicFormLibModule } from 'projects/dynamic-form-lib/src/public_api';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { EffectsModule } from '@ngrx/effects';
 
 @NgModule({
   declarations: [
@@ -14,6 +15,7 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
     BrowserModule,
     DynamicFormLibModule,
     StoreModule.forRoot({}),
+    EffectsModule.forRoot([]),
     StoreDevtoolsModule.instrument()
   ],
   providers: [],
