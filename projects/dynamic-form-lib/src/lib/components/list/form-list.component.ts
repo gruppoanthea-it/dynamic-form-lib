@@ -1,10 +1,11 @@
-import { getAllItems } from './../../reducers/selectors';
+import { getAllItems, getUiState } from './../../reducers/selectors';
 import { LibraryState } from './../../models/store.interface';
 import { Component, OnInit } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { IFormStruct } from '../../models';
 import { Store, select } from '@ngrx/store';
 import { getSchema } from '../../reducers/selectors';
+import { UiChangeRow } from '../../actions/ui.actions';
 
 @Component({
     selector: 'df-form-list',
@@ -15,7 +16,7 @@ import { getSchema } from '../../reducers/selectors';
             <td mat-cell *matCellDef="let element"> {{element[field.name]}} </td>
         </ng-container>
         <tr mat-header-row *matHeaderRowDef="columns; sticky: true"></tr>
-        <tr mat-row [ngClass]="i === selectedRow ? 'mat-row-selected' : ''"
+        <tr mat-row [ngClass]="row.id === selectedKey ? 'mat-row-selected' : ''"
         *matRowDef="let row; columns: columns;let i = index" (click)="rowClicked(row)"></tr>
     </table>
     `,
@@ -31,12 +32,10 @@ import { getSchema } from '../../reducers/selectors';
 export class FormListComponent implements OnInit {
 
     formSchema: IFormStruct;
-    data: {
-        [key: string]: any;
-    };
+    data: any[];
 
     private columns: string[];
-    private selectedRow: number;
+    private selectedKey: string;
 
     constructor(private mediaObserver: MediaObserver,
                 private store: Store<LibraryState>) {
@@ -54,7 +53,11 @@ export class FormListComponent implements OnInit {
         this.store.pipe(select(getAllItems))
             .subscribe(value => {
                 this.data = value;
+            });
+        this.store.pipe(select(getUiState))
+            .subscribe(value => {
                 console.log(value);
+                this.selectedKey = value.selectedKey;
             });
     }
 
@@ -65,7 +68,8 @@ export class FormListComponent implements OnInit {
     }
 
     rowClicked(row) {
-        console.log(row);
+        console.log(row.id, this.selectedKey);
+        this.store.dispatch(new UiChangeRow(row.id));
     }
 
 }

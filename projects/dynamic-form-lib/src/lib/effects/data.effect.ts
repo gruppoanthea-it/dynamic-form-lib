@@ -7,6 +7,8 @@ import { HttpEventType, HttpResponse, HttpErrorResponse } from '@angular/common/
 import { throwError, of } from 'rxjs';
 import { UiError } from '../actions/ui.actions';
 import { DataFetch, DataSuccess, DataError } from '../actions/data.actions';
+import * as _ from 'lodash';
+import { UUID } from 'angular2-uuid';
 
 interface Success {
     data: any;
@@ -32,7 +34,11 @@ export class DataEffects {
             filter(response => response.type === HttpEventType.Response),
             map((response: HttpResponse<any>) => {
                 if (response.status === 200) {
-                    return new DataSuccess(response.body);
+                    const data = _.keyBy(response.body, (el) => {
+                        el.id = el.id ? el.id : UUID.UUID();
+                        return el.id;
+                    });
+                    return new DataSuccess(data);
                 } else {
                     console.log('Trowing error', response);
                     throwError(response.body || (response.status + ' - ' + response.statusText));

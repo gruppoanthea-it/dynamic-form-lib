@@ -1,6 +1,7 @@
 import { STORE_NAME } from './../models/store.interface';
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { LibraryState } from '../models/store.interface';
+import * as _ from 'lodash';
 
 export const getRootState = createFeatureSelector<LibraryState>(STORE_NAME);
 
@@ -26,11 +27,11 @@ export const getDataEntity = createSelector(
 
 export const getAllItems = createSelector(
     getDataEntity,
-    state => state.items
+    state => _.values(state.items)
 );
 
 export const getSelectedItem = createSelector(
-    getAllItems,
+    getDataEntity,
     getUiState,
-    (items, ui) => ui.selectedKey ? items[ui.selectedKey] : null
+    (data, ui) => ui.selectedKey ? data.items[ui.selectedKey] : null
 );

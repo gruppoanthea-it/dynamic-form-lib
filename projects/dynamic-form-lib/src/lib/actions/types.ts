@@ -2,6 +2,8 @@ export enum ActionTypes {
     // UI
     UI_ERROR = 'UI_ERROR',
     UI_CHANGE_ROW = 'UI_CHANGE_ROW',
+    UI_COMMAND = 'UI_COMMAND',
+    UI_COMMAND_RESULT = 'UI_COMMAND_RESULT',
     // SCHEMA
     SCHEMA_FETCH = 'SCHEMA_FETCH',
     SCHEMA_ERROR = 'SCHEMA_ERROR',

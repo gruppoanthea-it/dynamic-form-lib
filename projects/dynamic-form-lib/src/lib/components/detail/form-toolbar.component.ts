@@ -5,6 +5,7 @@ import { Store, select } from '@ngrx/store';
 import { map, distinctUntilChanged } from 'rxjs/operators';
 import { LibraryState } from '../../models/store.interface';
 import { getSchema } from '../../reducers/selectors';
+import { UiCommand, CommandTypes } from '../../actions/ui.actions';
 
 @Component({
     selector: 'df-form-toolbar',
@@ -29,15 +30,12 @@ export class FormToolbarComponent implements OnInit {
 
     private formSchema: IFormStruct;
     @Input() tabIndex: number;
-
     @Output() changeView: EventEmitter<void>;
-
     private isFormModified: boolean;
 
-    constructor(private dynamicFormService: DynamicFormService,
-                private store: Store<LibraryState>) {
+    constructor(private store: Store<LibraryState>) {
         this.changeView = new EventEmitter();
-        this.isFormModified = false;
+        this.isFormModified = true;
     }
 
     ngOnInit() {
@@ -64,6 +62,8 @@ export class FormToolbarComponent implements OnInit {
     }
 
     resetFormCommand() {
-        // this.store.dispatch(new DetailReset(true));
+        this.store.dispatch(new UiCommand({
+            type: CommandTypes.COMMAND_RESET
+        }));
     }
 }

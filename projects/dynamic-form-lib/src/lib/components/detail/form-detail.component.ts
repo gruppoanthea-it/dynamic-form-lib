@@ -6,6 +6,7 @@ import { MediaObserver, MediaChange } from '@angular/flex-layout';
 import { IFormStruct } from '../../models';
 import { deepCopy, equals } from '../../utility/utility.functions';
 import { LibraryState } from '../../models/store.interface';
+import { DynamicFormService } from '../../services/dynamic-form.service';
 
 @Component({
     selector: 'df-form-detail',
@@ -38,7 +39,8 @@ export class FormDetailComponent implements OnInit {
     private currentBP: string;
 
     constructor(private mediaObserver: MediaObserver,
-         private store: Store<LibraryState>) {
+         private store: Store<LibraryState>,
+         private formService: DynamicFormService) {
         this.mediaObserver.media$.subscribe((media: MediaChange) => {
             this.currentBP = media.mqAlias;
             this.adjustGrid();
@@ -60,6 +62,10 @@ export class FormDetailComponent implements OnInit {
                 this.data = value;
                 this.parseData();
             });
+        this.formService.actionNotifier$
+        .subscribe((value) => {
+            console.log(value);
+        });
     }
 
     private parseData() {

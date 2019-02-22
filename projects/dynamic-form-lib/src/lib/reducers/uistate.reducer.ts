@@ -18,7 +18,7 @@ export function uiStateReducer(state = initialState, action: UiActions) {
             if (state.selectedKey === action.rowKey) {
                 return state;
             }
-            return {...state, seletedKey: action.rowKey};
+            return {...state, selectedKey: action.rowKey};
         default:
             return state;
     }
