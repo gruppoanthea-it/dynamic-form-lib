@@ -1,14 +1,15 @@
 import { DynamicFormService } from '../services/dynamic-form.service';
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
-import { map, mergeMap, catchError, filter, defaultIfEmpty } from 'rxjs/operators';
+import { map, mergeMap, catchError, filter, defaultIfEmpty, combineAll, tap, switchMap } from 'rxjs/operators';
 import { ActionTypes } from '../actions/types';
 import { HttpEventType, HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { throwError, of } from 'rxjs';
-import { UiError } from '../actions/ui.actions';
+import { UiError, UiChangeRow } from '../actions/ui.actions';
 import { DataFetch, DataSuccess, DataError } from '../actions/data.actions';
 import * as _ from 'lodash';
 import { UUID } from 'angular2-uuid';
+import { Entity } from '../models/common.interface';
 
 interface Success {
     data: any;
@@ -34,15 +35,27 @@ export class DataEffects {
             filter(response => response.type === HttpEventType.Response),
             map((response: HttpResponse<any>) => {
                 if (response.status === 200) {
-                    const data = _.keyBy(response.body, (el) => {
-                        el.id = el.id ? el.id : UUID.UUID();
-                        return el.id;
-                    });
-                    return new DataSuccess(data);
+                    return response.body as [];
                 } else {
                     console.log('Trowing error', response);
                     throwError(response.body || (response.status + ' - ' + response.statusText));
                 }
+            }),
+            map(item => item.map((el: any) => new Entity(el))),
+            map(items => new Map<string, Entity>(
+                items.map(el => [el.Id, el] as [string, Entity])
+            )),
+            switchMap((items: Map<string, Entity>) => {
+                let first = null;
+                for (let i = 0; i < items.size; i++) {
+                    const item = items.keys().next();
+                    first = item.value;
+                    break;
+                }
+                return [
+                    new DataSuccess(items),
+                    new UiChangeRow(first)
+                ];
             }),
             catchError((error) => {
                 let err: string;

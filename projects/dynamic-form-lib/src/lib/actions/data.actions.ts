@@ -1,6 +1,7 @@
 import { Action } from '@ngrx/store';
 import { ActionTypes } from './types';
 import { DataRetrieve } from '../models';
+import { Entity } from '../models/common.interface';
 
 export class DataFetch implements Action {
     readonly type = ActionTypes.DATA_FETCH;
@@ -14,7 +15,22 @@ export class DataError implements Action {
 
 export class DataSuccess implements Action {
     readonly type = ActionTypes.DATA_SUCCESS;
-    constructor(public items: {[key: string]: any}) {}
+    constructor(public items: Map<string, Entity>) {}
 }
 
-export type DataActions = DataFetch | DataError | DataSuccess;
+export class DataUpdate implements Action {
+    readonly type = ActionTypes.DATA_UPDATE;
+    constructor(public item: Entity) {}
+}
+
+export class DataReset implements Action {
+    readonly type = ActionTypes.DATA_RESET;
+}
+
+export class DataInsert implements Action {
+    readonly type = ActionTypes.DATA_INSERT;
+    constructor(public item: Entity) {}
+}
+
+export type DataActions = DataFetch | DataError |
+ DataSuccess | DataUpdate | DataReset | DataInsert;

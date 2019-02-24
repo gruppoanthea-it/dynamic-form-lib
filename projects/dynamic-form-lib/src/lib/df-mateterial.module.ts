@@ -11,6 +11,7 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatTableModule} from '@angular/material/table';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {MatDividerModule} from '@angular/material/divider';
 
 @NgModule({
     imports: [
@@ -24,7 +25,8 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
         MatSelectModule,
         MatTabsModule,
         MatTableModule,
-        MatProgressSpinnerModule
+        MatProgressSpinnerModule,
+        MatDividerModule
     ],
     exports: [
         MatInputModule,
@@ -37,7 +39,8 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
         MatSelectModule,
         MatTabsModule,
         MatTableModule,
-        MatProgressSpinnerModule
+        MatProgressSpinnerModule,
+        MatDividerModule
     ]
   })
   export class DfMaterialModule { }

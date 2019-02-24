@@ -1,9 +1,12 @@
+import { Action } from '@ngrx/store';
+
 export enum ActionTypes {
+    VOID = 'VOID',
+    EVENT = 'EVENT',
+    EVENT_RESULT = 'EVENT_RESULT',
     // UI
     UI_ERROR = 'UI_ERROR',
     UI_CHANGE_ROW = 'UI_CHANGE_ROW',
-    UI_COMMAND = 'UI_COMMAND',
-    UI_COMMAND_RESULT = 'UI_COMMAND_RESULT',
     // SCHEMA
     SCHEMA_FETCH = 'SCHEMA_FETCH',
     SCHEMA_ERROR = 'SCHEMA_ERROR',
@@ -11,5 +14,12 @@ export enum ActionTypes {
     // DATA
     DATA_FETCH = 'DATA_FETCH',
     DATA_ERROR = 'DATA_ERROR',
-    DATA_SUCCESS = 'DATA_SUCCESS'
+    DATA_SUCCESS = 'DATA_SUCCESS',
+    DATA_UPDATE = 'DATA_UPDATE',
+    DATA_INSERT = 'DATA_INSERT',
+    DATA_RESET = 'DATA_RESET'
+}
+
+export class ActionVoid implements Action {
+    readonly type = ActionTypes.VOID;
 }

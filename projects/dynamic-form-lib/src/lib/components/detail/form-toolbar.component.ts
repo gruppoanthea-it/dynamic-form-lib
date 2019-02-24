@@ -1,11 +1,10 @@
-import { DynamicFormService } from '../../services/dynamic-form.service';
 import { Component, OnInit, Output, Input, EventEmitter } from '@angular/core';
 import { IFormStruct } from '../../models';
 import { Store, select } from '@ngrx/store';
-import { map, distinctUntilChanged } from 'rxjs/operators';
 import { LibraryState } from '../../models/store.interface';
-import { getSchema } from '../../reducers/selectors';
-import { UiCommand, CommandTypes } from '../../actions/ui.actions';
+import { getSchema, getDataChanged } from '../../reducers/selectors';
+import { EventReset, EventInsert } from '../../models/events.interface';
+import { Event } from '../../actions/events.actions';
 
 @Component({
     selector: 'df-form-toolbar',
@@ -18,8 +17,12 @@ import { UiCommand, CommandTypes } from '../../actions/ui.actions';
                 <button (click)="changeView.emit()" *ngIf="formSchema.type === 'both'" mat-icon-button>
                     <mat-icon aria-label="Change View">{{tabIndex === 1 ? 'view_list' : 'create'}}</mat-icon>
                 </button>
+                <mat-divider [vertical]="true" [inset]="true"></mat-divider>
                 <button (click)="resetFormCommand()" *ngIf="tabIndex === 1 && isFormModified" mat-icon-button>
                     <mat-icon aria-label="Reset Form">undo</mat-icon>
+                </button>
+                <button (click)="addItemCommand()" *ngIf="tabIndex === 1" mat-icon-button>
+                    <mat-icon aria-label="Add Item">add</mat-icon>
                 </button>
             </mat-toolbar-row>
         </mat-toolbar>
@@ -35,7 +38,7 @@ export class FormToolbarComponent implements OnInit {
 
     constructor(private store: Store<LibraryState>) {
         this.changeView = new EventEmitter();
-        this.isFormModified = true;
+        this.isFormModified = false;
     }
 
     ngOnInit() {
@@ -43,27 +46,19 @@ export class FormToolbarComponent implements OnInit {
             .subscribe((value) => {
                 if (value.loaded) {
                     this.formSchema = value.item;
-                    this.initToolbar();
                 }
             });
-        // this.store.select(STORE_NAME)
-        //     .pipe(map((state: IState) => state.detail), distinctUntilChanged())
-        //     .subscribe((value) => {
-        //         this.isFormModified = value.updated;
-        //     });
-    }
-
-    private initToolbar() {
-        // if (this.formSchema) {
-        //     this.dynamicFormService.isFormModified().subscribe((modified) => {
-        //         this.isFormModified = modified;
-        //     });
-        // }
+        this.store.pipe(select(getDataChanged))
+            .subscribe((value) => {
+                this.isFormModified = value;
+            });
     }
 
     resetFormCommand() {
-        this.store.dispatch(new UiCommand({
-            type: CommandTypes.COMMAND_RESET
-        }));
+        this.store.dispatch(new Event(new EventReset()));
+    }
+
+    addItemCommand() {
+        this.store.dispatch(new Event(new EventInsert()));
     }
 }

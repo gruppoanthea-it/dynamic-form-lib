@@ -4,20 +4,26 @@
  * @param o2 Second object
  */
 export function equals(o1: any, o2: any): boolean {
+    if (!o1 && !o2) {
+        return true;
+    }
+    if ((!o1 && o2) || (o1 && !o2)) {
+        return false;
+    }
     for (const key in o1) {
         if (o1.hasOwnProperty(key)) {
             if (typeof o1[key] === 'object') {
-                if (equals(o1[key], o2[key])) {
-                    return true;
+                if (!equals(o1[key], o2[key])) {
+                    return false;
                 }
             } else {
                 if (o1[key] !== o2[key]) {
-                    return true;
+                    return false;
                 }
             }
         }
     }
-    return false;
+    return true;
 }
 
 /**

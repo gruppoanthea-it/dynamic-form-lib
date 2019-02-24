@@ -6,6 +6,12 @@ import { IFormStruct } from '../../models';
 import { Store, select } from '@ngrx/store';
 import { getSchema } from '../../reducers/selectors';
 import { UiChangeRow } from '../../actions/ui.actions';
+import { Entity } from '../../models/common.interface';
+import { map } from 'rxjs/operators';
+import { DataSource } from '@angular/cdk/table';
+import { CollectionViewer } from '@angular/cdk/collections';
+import { Observable } from 'rxjs';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
     selector: 'df-form-list',
@@ -13,10 +19,10 @@ import { UiChangeRow } from '../../actions/ui.actions';
     <table mat-table [dataSource]="data" class="mat-elevation-z8">
         <ng-container *ngFor="let field of formSchema.fields" [matColumnDef]="field.name">
             <th mat-header-cell *matHeaderCellDef>{{field.label || field.placeholder}}</th>
-            <td mat-cell *matCellDef="let element"> {{element[field.name]}} </td>
+            <td mat-cell *matCellDef="let element"> {{element.data[field.name]}} </td>
         </ng-container>
         <tr mat-header-row *matHeaderRowDef="columns; sticky: true"></tr>
-        <tr mat-row [ngClass]="row.id === selectedKey ? 'mat-row-selected' : ''"
+        <tr mat-row [ngClass]="row.Id === selectedKey ? 'mat-row-selected' : ''"
         *matRowDef="let row; columns: columns;let i = index" (click)="rowClicked(row)"></tr>
     </table>
     `,
@@ -56,7 +62,6 @@ export class FormListComponent implements OnInit {
             });
         this.store.pipe(select(getUiState))
             .subscribe(value => {
-                console.log(value);
                 this.selectedKey = value.selectedKey;
             });
     }
@@ -67,10 +72,8 @@ export class FormListComponent implements OnInit {
         });
     }
 
-    rowClicked(row) {
-        console.log(row.id, this.selectedKey);
-        this.store.dispatch(new UiChangeRow(row.id));
+    rowClicked(row: Entity) {
+        this.store.dispatch(new UiChangeRow(row.Id));
     }
 
 }
-

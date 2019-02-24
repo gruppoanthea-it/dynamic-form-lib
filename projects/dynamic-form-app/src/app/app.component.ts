@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { SchemaRetrieve, DataRetrieve } from 'projects/dynamic-form-lib/src/public_api';
+import { EventOptions, EventInsert, EventReset } from 'projects/dynamic-form-lib/src/lib/models/events.interface';
 
 @Component({
   selector: 'app-root',
@@ -18,4 +19,13 @@ export class AppComponent {
         url: location + '/assets/json/data.json',
         method: 'get'
     });
+
+    eventOptions: EventOptions = {
+        OnEventInsert: (event: EventInsert) => {
+            console.log(event);
+        },
+        OnEventReset: (event: EventReset) => {
+            console.log(event);
+        }
+    };
 }

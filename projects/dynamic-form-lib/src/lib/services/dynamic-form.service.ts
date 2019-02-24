@@ -2,16 +2,16 @@ import { SchemaRetrieve, DataRetrieve } from 'projects/dynamic-form-lib/src/publ
 import { HttpClient, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-import { Command } from '../actions/ui.actions';
+import { EventBase } from '../models/events.interface';
 
 @Injectable({
     providedIn: 'root'
 })
 export class DynamicFormService {
 
-    public actionNotifier$: Subject<Command>;
+    public eventNotifier$: Subject<EventBase>;
     constructor(private http: HttpClient) {
-        this.actionNotifier$ = new Subject();
+        this.eventNotifier$ = new Subject();
     }
 
     retrieveSchema(options: SchemaRetrieve) {
@@ -43,7 +43,7 @@ export class DynamicFormService {
         return this.http.request(dataRequestDef);
     }
 
-    notifyCommand(command: Command) {
-        this.actionNotifier$.next(command);
+    notifyCommand(event: EventBase) {
+        this.eventNotifier$.next(event);
     }
 }

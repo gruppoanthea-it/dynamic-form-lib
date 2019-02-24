@@ -1,16 +1,16 @@
-import { LibraryState, STORE_NAME, SchemaData } from './models/store.interface';
+import { LibraryState } from './models/store.interface';
 import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
 import { IFormStruct } from './models/form-struct/form-struct.interface';
 import { InvalidStructError, InvalidSchemaRetrieveError } from './models/exceptions';
-import { Observable } from 'rxjs';
-import { map, distinctUntilChanged } from 'rxjs/operators';
 import { Store, select } from '@ngrx/store';
-import { DataFetch, DataSuccess } from './actions/data.actions';
-import { HttpClient, HttpRequest, HttpEvent, HttpEventType } from '@angular/common/http';
+import { DataFetch } from './actions/data.actions';
 import { SchemaRetrieve } from './models/schema.retrieve';
 import { DataRetrieve } from './models/data.retrieve';
-import { SchemaFetch, SchemaSuccess } from './actions/schema.actions';
+import { SchemaFetch } from './actions/schema.actions';
 import { getSchema } from './reducers/selectors';
+import { DynamicFormService } from './services/dynamic-form.service';
+import { EventBase, EventOptions, EventTypes, EventReset, EventInsert } from './models/events.interface';
+import { EventResult } from './actions/events.actions';
 
 @Component({
   selector: 'df-dynamic-form',
@@ -57,12 +57,14 @@ export class DynamicFormLibComponent implements OnInit {
 
     @Input() schemaRetrieve: SchemaRetrieve;
     @Input() dataRetrieve: DataRetrieve;
+    @Input() eventOptions: EventOptions;
 
     private schema: IFormStruct;
     private tabIndex: number;
     private loadingSchema: boolean;
 
-    constructor(private http: HttpClient, private store: Store<LibraryState>) {
+    constructor(private store: Store<LibraryState>,
+        private formService: DynamicFormService) {
         this.loadingSchema = true;
     }
 
@@ -82,6 +84,29 @@ export class DynamicFormLibComponent implements OnInit {
             });
         this.store.dispatch(new SchemaFetch(this.schemaRetrieve));
         this.store.dispatch(new DataFetch(this.dataRetrieve));
+        this.formService.eventNotifier$
+            .subscribe((value) => {
+                this.dispatchEvent(value);
+            });
+    }
+
+    private dispatchEvent(event: EventBase) {
+        // Chiamo l'evento per farlo gestire da fuori
+        if (this.eventOptions) {
+            switch (event.type) {
+                case EventTypes.EVENT_RESET:
+                    if (this.eventOptions.OnEventReset) {
+                        this.eventOptions.OnEventReset(<EventReset>event);
+                    }
+                    break;
+                case EventTypes.EVENT_INSERT:
+                    if (this.eventOptions.OnEventInsert) {
+                        this.eventOptions.OnEventInsert(<EventInsert>event);
+                    }
+                    break;
+            }
+        }
+        this.store.dispatch(new EventResult(event));
     }
 
     private validateSchema = () => {

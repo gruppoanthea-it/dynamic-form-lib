@@ -21,7 +21,7 @@ import { FieldSelectComponent } from './components/detail/dynamic/field-select.c
 import { FormListComponent } from './components/list/form-list.component';
 import { EffectsModule } from '@ngrx/effects';
 import { SchemaEffects } from './effects/schema.effect';
-import { UiEffects } from './effects/ui.effects';
+import { EventsEffects } from './effects/events.effects';
 
 
 @NgModule({
@@ -47,7 +47,7 @@ import { UiEffects } from './effects/ui.effects';
     EffectsModule.forFeature([
         SchemaEffects,
         DataEffects,
-        UiEffects
+        EventsEffects
     ])
 ],
   exports: [DynamicFormLibComponent],

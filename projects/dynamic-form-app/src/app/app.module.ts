@@ -16,7 +16,9 @@ import { EffectsModule } from '@ngrx/effects';
     DynamicFormLibModule,
     StoreModule.forRoot({}),
     EffectsModule.forRoot([]),
-    StoreDevtoolsModule.instrument()
+    StoreDevtoolsModule.instrument({
+      serialize: true
+    })
   ],
   providers: [],
   bootstrap: [AppComponent]

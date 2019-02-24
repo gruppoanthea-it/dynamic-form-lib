@@ -7,6 +7,8 @@ import { IFormStruct } from '../../models';
 import { deepCopy, equals } from '../../utility/utility.functions';
 import { LibraryState } from '../../models/store.interface';
 import { DynamicFormService } from '../../services/dynamic-form.service';
+import { DataUpdate } from '../../actions/data.actions';
+import { Entity } from '../../models/common.interface';
 
 @Component({
     selector: 'df-form-detail',
@@ -29,8 +31,7 @@ import { DynamicFormService } from '../../services/dynamic-form.service';
 export class FormDetailComponent implements OnInit {
 
     private formSchema: IFormStruct;
-    private data: any;
-    private originalData: any;
+    private data: Entity;
     private form: FormGroup;
     private stopPropagation: boolean;
 
@@ -39,8 +40,7 @@ export class FormDetailComponent implements OnInit {
     private currentBP: string;
 
     constructor(private mediaObserver: MediaObserver,
-         private store: Store<LibraryState>,
-         private formService: DynamicFormService) {
+         private store: Store<LibraryState>) {
         this.mediaObserver.media$.subscribe((media: MediaChange) => {
             this.currentBP = media.mqAlias;
             this.adjustGrid();
@@ -58,21 +58,15 @@ export class FormDetailComponent implements OnInit {
             });
         this.store.pipe(select(getSelectedItem))
             .subscribe(value => {
-                console.log('selected item', value);
                 this.data = value;
                 this.parseData();
             });
-        this.formService.actionNotifier$
-        .subscribe((value) => {
-            console.log(value);
-        });
     }
 
     private parseData() {
         if (!this.data) {
-            this.data = {};
+            this.data = new Entity();
         }
-        this.originalData = deepCopy(this.data);
         this.resetForm();
     }
 
@@ -118,11 +112,10 @@ export class FormDetailComponent implements OnInit {
             if (!this.stopPropagation) {
                 for (const key in values) {
                     if (values.hasOwnProperty(key)) {
-                        this.data[key] = values[key];
+                        this.data.data[key] = values[key];
                     }
                 }
-                const updated = equals(this.data, this.originalData);
-                // this.store.dispatch(new DetailUpdated(updated));
+                this.store.dispatch(new DataUpdate(this.data));
             }
         });
     }
@@ -133,10 +126,9 @@ export class FormDetailComponent implements OnInit {
 
     resetForm() {
         this.stopPropagation = true;
-        this.data = deepCopy(this.originalData);
         for (const key in this.form.controls) {
             if (this.form.controls.hasOwnProperty(key)) {
-                this.form.controls[key].setValue(this.data[key]);
+                this.form.controls[key].setValue(this.data.data[key]);
             }
         }
         // this.store.dispatch(new DetailReset(false));
