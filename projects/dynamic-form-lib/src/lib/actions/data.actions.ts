@@ -32,5 +32,10 @@ export class DataInsert implements Action {
     constructor(public item: Entity) {}
 }
 
+export class DataDelete implements Action {
+    readonly type = ActionTypes.DATA_DELETE;
+    constructor(public id: string) {}
+}
+
 export type DataActions = DataFetch | DataError |
- DataSuccess | DataUpdate | DataReset | DataInsert;
+ DataSuccess | DataUpdate | DataReset | DataInsert | DataDelete;

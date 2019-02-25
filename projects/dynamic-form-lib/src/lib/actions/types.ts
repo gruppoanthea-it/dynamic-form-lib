@@ -17,6 +17,7 @@ export enum ActionTypes {
     DATA_SUCCESS = 'DATA_SUCCESS',
     DATA_UPDATE = 'DATA_UPDATE',
     DATA_INSERT = 'DATA_INSERT',
+    DATA_DELETE = 'DATA_DELETE',
     DATA_RESET = 'DATA_RESET'
 }
 

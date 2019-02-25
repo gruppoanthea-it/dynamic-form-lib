@@ -49,6 +49,27 @@ export function reducerData(state = initialState, action: DataActions) {
         const changes = new Map(state.changes);
         changes.set(action.item.Id, action.item);
         return {...state, changes: changes};
+    case ActionTypes.DATA_DELETE:
+        if (!state.loaded) {
+            return state;
+        }
+        let item: Entity = null;
+        const change1 = new Map(state.changes);
+        if (change1.has(action.id)) {
+            item = change1.get(action.id);
+            console.log(item);
+            if (item.Inserted) {
+                change1.delete(action.id);
+            } else {
+                item.Deleted = true;
+                change1.set(item.Id, item);
+            }
+        } else {
+            item = deepCopy(state.items.get(action.id));
+            item.Deleted = true;
+            change1.set(item.Id, item);
+        }
+        return {...state, changes: change1};
     default:
       return state;
   }

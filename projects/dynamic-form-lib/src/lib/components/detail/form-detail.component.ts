@@ -1,4 +1,4 @@
-import { getSchema, getSelectedItem } from './../../reducers/selectors';
+import { getSchema, getSelectedItem, getDataEntity } from './../../reducers/selectors';
 import { Component, OnInit} from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import { FormGroup, FormControl } from '@angular/forms';
@@ -9,6 +9,8 @@ import { LibraryState } from '../../models/store.interface';
 import { DynamicFormService } from '../../services/dynamic-form.service';
 import { DataUpdate } from '../../actions/data.actions';
 import { Entity } from '../../models/common.interface';
+import { EventInsert } from '../../models/events.interface';
+import { Event } from '../../actions/events.actions';
 
 @Component({
     selector: 'df-form-detail',
@@ -32,6 +34,7 @@ export class FormDetailComponent implements OnInit {
 
     private formSchema: IFormStruct;
     private data: Entity;
+    private dataLoaded: boolean;
     private form: FormGroup;
     private stopPropagation: boolean;
 
@@ -46,6 +49,7 @@ export class FormDetailComponent implements OnInit {
             this.adjustGrid();
         });
         this.stopPropagation = false;
+        this.dataLoaded = false;
     }
 
     ngOnInit() {
@@ -61,11 +65,20 @@ export class FormDetailComponent implements OnInit {
                 this.data = value;
                 this.parseData();
             });
+        this.store.pipe(select(getDataEntity))
+            .subscribe(value => {
+                this.dataLoaded = value.loaded;
+                this.parseData();
+            });
     }
 
     private parseData() {
+        if (!this.dataLoaded) {
+            return;
+        }
         if (!this.data) {
             this.data = new Entity();
+            return;
         }
         this.resetForm();
     }

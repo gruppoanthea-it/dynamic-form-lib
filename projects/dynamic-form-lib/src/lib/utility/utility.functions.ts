@@ -1,3 +1,5 @@
+import { Entity } from '../models/common.interface';
+
 /**
  * Function that checks if two object are equals (deep check)
  * @param o1 First object
@@ -57,4 +59,37 @@ export function deepCopy(obj: any): any {
         return copy;
     }
     return null;
+}
+
+export function mergeChanges(current: Map<string, Entity>, changes: Map<string, Entity>, removeDeleted: boolean) {
+    if (!current && !changes) {
+        return null;
+    }
+    if (!current && changes) {
+        return new Map(changes);
+    }
+    if (current && !changes) {
+        return new Map(current);
+    }
+    const result: Map<string, Entity> = new Map();
+    current.forEach((value, key) => {
+        result.set(key, value);
+    });
+    changes.forEach((value, key) => {
+        if (!result.has(key)) {
+            result.set(key, value);
+        } else {
+            const cur = result.get(key);
+            const item = {...cur, ...value} as Entity;
+            result.set(key, item);
+        }
+    });
+    if (removeDeleted) {
+        result.forEach((value, key) => {
+            if (value.Deleted) {
+                result.delete(key);
+            }
+        });
+    }
+    return result;
 }

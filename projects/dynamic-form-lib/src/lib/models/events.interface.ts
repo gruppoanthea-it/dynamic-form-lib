@@ -2,7 +2,8 @@ import { Entity } from './common.interface';
 
 export enum EventTypes {
     EVENT_RESET,
-    EVENT_INSERT
+    EVENT_INSERT,
+    EVENT_DELETE
 }
 
 export abstract class EventBase {
@@ -32,6 +33,13 @@ export class EventReset extends EventBase {
  */
 export class EventInsert extends EventBase {
     readonly type = EventTypes.EVENT_INSERT;
+    constructor(public item?: Entity) {
+        super();
+    }
+}
+
+export class EventDelete extends EventBase {
+    readonly type = EventTypes.EVENT_DELETE;
     constructor(public item?: Entity) {
         super();
     }

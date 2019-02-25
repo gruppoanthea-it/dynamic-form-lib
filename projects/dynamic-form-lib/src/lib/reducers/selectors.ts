@@ -2,7 +2,7 @@ import { STORE_NAME } from './../models/store.interface';
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { LibraryState } from '../models/store.interface';
 import * as _ from 'lodash';
-import { deepCopy } from '../utility/utility.functions';
+import { deepCopy, mergeChanges } from '../utility/utility.functions';
 import { Entity } from '../models/common.interface';
 import { merge } from 'rxjs/operators';
 
@@ -34,8 +34,8 @@ export const getItemsAsMap = createSelector(
         if (!state.items) {
             return null;
         }
-        const merged: Map<string, Entity> = new Map([...Array.from(state.items.entries()),
-         ...Array.from(state.changes.entries())]);
+        const mer = mergeChanges(state.items, state.changes, true);
+        const merged: Map<string, Entity> = new Map(mer);
         return merged;
     }
 );

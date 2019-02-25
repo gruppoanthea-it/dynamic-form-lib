@@ -16,15 +16,17 @@ import { MatTableDataSource } from '@angular/material/table';
 @Component({
     selector: 'df-form-list',
     template: `
-    <table mat-table [dataSource]="data" class="mat-elevation-z8">
-        <ng-container *ngFor="let field of formSchema.fields" [matColumnDef]="field.name">
-            <th mat-header-cell *matHeaderCellDef>{{field.label || field.placeholder}}</th>
-            <td mat-cell *matCellDef="let element"> {{element.data[field.name]}} </td>
-        </ng-container>
-        <tr mat-header-row *matHeaderRowDef="columns; sticky: true"></tr>
-        <tr mat-row [ngClass]="row.Id === selectedKey ? 'mat-row-selected' : ''"
-        *matRowDef="let row; columns: columns;let i = index" (click)="rowClicked(row)"></tr>
-    </table>
+    <div style="overflow: auto; height: 100%">
+        <table mat-table [dataSource]="data" class="mat-elevation-z8">
+            <ng-container *ngFor="let field of formSchema.fields" [matColumnDef]="field.name">
+                <th mat-header-cell *matHeaderCellDef>{{field.label || field.placeholder}}</th>
+                <td mat-cell *matCellDef="let element"> {{element.data[field.name]}} </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="columns; sticky: true"></tr>
+            <tr mat-row [ngClass]="row.Id === selectedKey ? 'mat-row-selected' : ''"
+            *matRowDef="let row; columns: columns;let i = index" (click)="rowClicked(row)"></tr>
+        </table>
+    </div>
     `,
     styles: [`
         table {

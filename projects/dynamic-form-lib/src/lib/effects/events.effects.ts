@@ -4,11 +4,11 @@ import { Actions, Effect, ofType } from '@ngrx/effects';
 import { map, switchMap, withLatestFrom } from 'rxjs/operators';
 import { ActionTypes, ActionVoid } from '../actions/types';
 import { UiChangeRow } from '../actions/ui.actions';
-import { DataReset, DataInsert } from '../actions/data.actions';
+import { DataReset, DataInsert, DataDelete } from '../actions/data.actions';
 import { Entity } from '../models/common.interface';
 import { Action } from '@ngrx/store';
 import { Event, EventResult } from '../actions/events.actions';
-import { EventTypes } from '../models/events.interface';
+import { EventTypes, EventDelete } from '../models/events.interface';
 
 @Injectable()
 export class EventsEffects {
@@ -41,10 +41,16 @@ export class EventsEffects {
                 ];
               case EventTypes.EVENT_INSERT:
                 const item = new Entity();
+                item.Inserted = true;
                 return [
                   new DataInsert(item),
                   new UiChangeRow(item.Id)
                 ];
+              case EventTypes.EVENT_DELETE:
+              console.log(action);
+                return [
+                  new DataDelete((<EventDelete>action.eventResult).item.Id)
+                ]
           }
         })
       );
