@@ -17,7 +17,7 @@ export class DynamicFormService {
     retrieveSchema(options: SchemaRetrieve) {
         // Creo la richiesta per lo schema
         const schemaRequestDef = new HttpRequest(options.request.method,
-            options.request.url, null, {
+            options.request.url, options.request.body, {
                 headers: options.request.headers
             });
         if (options.onGetSchema) {
@@ -33,7 +33,7 @@ export class DynamicFormService {
         }
         // Creo la richiesta per i dati
         const dataRequestDef = new HttpRequest(options.request.method,
-            options.request.url, null, {
+            options.request.url, options.request.body, {
                 headers: options.request.headers
             });
         if (options.onGetData) {

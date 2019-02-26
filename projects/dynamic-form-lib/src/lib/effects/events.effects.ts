@@ -1,14 +1,14 @@
 import { DynamicFormService } from '../services/dynamic-form.service';
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
-import { map, switchMap, withLatestFrom } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { ActionTypes, ActionVoid } from '../actions/types';
 import { UiChangeRow } from '../actions/ui.actions';
 import { DataReset, DataInsert, DataDelete } from '../actions/data.actions';
 import { Entity } from '../models/common.interface';
 import { Action } from '@ngrx/store';
 import { Event, EventResult } from '../actions/events.actions';
-import { EventTypes, EventDelete } from '../models/events.interface';
+import { EventTypes, EventDelete, EventInsert } from '../models/events.interface';
 
 @Injectable()
 export class EventsEffects {
@@ -37,20 +37,20 @@ export class EventsEffects {
           switch (action.eventResult.type) {
               case EventTypes.EVENT_RESET:
                 return [
-                  new DataReset()
+                  new DataReset(),
+                  new UiChangeRow()
                 ];
               case EventTypes.EVENT_INSERT:
-                const item = new Entity();
-                item.Inserted = true;
+                const item = (<EventInsert>action.eventResult).item;
                 return [
                   new DataInsert(item),
                   new UiChangeRow(item.Id)
                 ];
               case EventTypes.EVENT_DELETE:
-              console.log(action);
                 return [
-                  new DataDelete((<EventDelete>action.eventResult).item.Id)
-                ]
+                  new DataDelete((<EventDelete>action.eventResult).item.Id),
+                  new UiChangeRow()
+                ];
           }
         })
       );

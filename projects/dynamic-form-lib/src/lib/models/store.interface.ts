@@ -10,6 +10,7 @@ export interface LibraryState {
 
 export interface UiState {
     selectedKey: string;
+    lastSelectedKey: string;
     error: ErrorData;
 }
 

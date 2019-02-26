@@ -1,10 +1,12 @@
 import { HttpHeaders } from '@angular/common/http';
 import { UUID } from 'angular2-uuid';
+import { deepCopy } from '../utility/utility.functions';
 
 export interface RequestOptions {
     url: string;
     method: 'get' | 'post' | 'delete' | 'update';
     headers?: HttpHeaders;
+    body?: any;
 }
 
 export class Entity {
@@ -21,6 +23,13 @@ export class Entity {
         if (!this.data) {
             this.data = {};
         }
+    }
+
+    public static from(obj: Entity) {
+        const el = new Entity();
+        Object.assign(el, obj);
+        el.data = deepCopy(obj.data);
+        return el;
     }
 
     public delete() {

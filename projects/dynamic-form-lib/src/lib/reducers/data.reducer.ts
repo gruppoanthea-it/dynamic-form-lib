@@ -57,7 +57,6 @@ export function reducerData(state = initialState, action: DataActions) {
         const change1 = new Map(state.changes);
         if (change1.has(action.id)) {
             item = change1.get(action.id);
-            console.log(item);
             if (item.Inserted) {
                 change1.delete(action.id);
             } else {

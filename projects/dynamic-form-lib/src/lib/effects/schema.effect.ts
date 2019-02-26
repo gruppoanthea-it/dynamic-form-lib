@@ -23,16 +23,24 @@ export class SchemaEffects {
             map((response: HttpResponse<any>) => {
                 if (response.type === HttpEventType.Response) {
                     if (response.status === 200) {
+                        if (action.options.afterGetSchema) {
+                            action.options.afterGetSchema(null, response.body);
+                        }
                         return new SchemaSuccess(response.body);
                     } else {
                         throwError(response.body || (response.status + ' - ' + response.statusText));
                     }
                 }
             }),
-            catchError((error) => [
+            catchError((error) => {
+                if (action.options.afterGetSchema) {
+                    action.options.afterGetSchema(error, null);
+                }
+                return [
                 new SchemaError(error),
                 new UiError('SCHEMA', error)
-            ])
+                ];
+            })
         ))
       );
 

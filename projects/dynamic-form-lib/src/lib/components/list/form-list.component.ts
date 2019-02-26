@@ -7,11 +7,6 @@ import { Store, select } from '@ngrx/store';
 import { getSchema } from '../../reducers/selectors';
 import { UiChangeRow } from '../../actions/ui.actions';
 import { Entity } from '../../models/common.interface';
-import { map } from 'rxjs/operators';
-import { DataSource } from '@angular/cdk/table';
-import { CollectionViewer } from '@angular/cdk/collections';
-import { Observable } from 'rxjs';
-import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
     selector: 'df-form-list',

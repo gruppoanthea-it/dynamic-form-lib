@@ -50,6 +50,30 @@ export const getAllItems = createSelector(
     }
 );
 
+export const getItemsCount = createSelector(
+    getItemsAsMap,
+    state => state ? state.size : 0
+);
+
+export const getCurrentIndex = createSelector(
+    getAllItems,
+    getUiState,
+    (items, ui) => {
+        if (!items) {
+            return 0;
+        }
+        let index = 0;
+        for (let i = 0; i < items.length; i++) {
+            const el = items[i];
+            if (el.Id === ui.selectedKey) {
+                index = i + 1;
+                break;
+            }
+        }
+        return index;
+    }
+);
+
 export const getSelectedItem = createSelector(
     getItemsAsMap,
     getUiState,

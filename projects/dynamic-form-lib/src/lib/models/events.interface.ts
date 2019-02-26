@@ -17,6 +17,7 @@ export abstract class EventBase {
 export interface EventOptions {
     OnEventReset?: (event: EventReset) => void;
     OnEventInsert?: (event: EventInsert) => void;
+    OnEventDelete?: (event: EventDelete) => void;
 }
 
 /**

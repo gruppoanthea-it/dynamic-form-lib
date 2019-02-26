@@ -37,7 +37,6 @@ export class DataEffects {
                 if (response.status === 200) {
                     return response.body as [];
                 } else {
-                    console.log('Trowing error', response);
                     throwError(response.body || (response.status + ' - ' + response.statusText));
                 }
             }),
@@ -52,6 +51,9 @@ export class DataEffects {
                     first = item.value;
                     break;
                 }
+                if (action.options.afterGetData) {
+                    action.options.afterGetData(null, items);
+                }
                 return [
                     new DataSuccess(items),
                     new UiChangeRow(first)
@@ -63,6 +65,9 @@ export class DataEffects {
                     err = error.message;
                 } else {
                     err = error;
+                }
+                if (action.options.afterGetData) {
+                    action.options.afterGetData(error, null);
                 }
                 return [
                     new DataError(err),

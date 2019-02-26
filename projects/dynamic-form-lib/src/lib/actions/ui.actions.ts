@@ -8,7 +8,7 @@ export class UiError implements Action {
 
 export class UiChangeRow implements Action {
     readonly type = ActionTypes.UI_CHANGE_ROW;
-    constructor(public rowKey: string) {}
+    constructor(public rowKey?: string) {}
 }
 
 export type UiActions = UiError | UiChangeRow;

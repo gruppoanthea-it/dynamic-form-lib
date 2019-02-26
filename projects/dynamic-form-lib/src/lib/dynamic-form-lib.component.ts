@@ -9,7 +9,7 @@ import { DataRetrieve } from './models/data.retrieve';
 import { SchemaFetch } from './actions/schema.actions';
 import { getSchema } from './reducers/selectors';
 import { DynamicFormService } from './services/dynamic-form.service';
-import { EventBase, EventOptions, EventTypes, EventReset, EventInsert } from './models/events.interface';
+import { EventBase, EventOptions, EventTypes, EventReset, EventInsert, EventDelete } from './models/events.interface';
 import { EventResult } from './actions/events.actions';
 
 @Component({
@@ -102,6 +102,11 @@ export class DynamicFormLibComponent implements OnInit {
                 case EventTypes.EVENT_INSERT:
                     if (this.eventOptions.OnEventInsert) {
                         this.eventOptions.OnEventInsert(<EventInsert>event);
+                    }
+                    break;
+                case EventTypes.EVENT_DELETE:
+                    if (this.eventOptions.OnEventDelete) {
+                        this.eventOptions.OnEventDelete(<EventDelete>event);
                     }
                     break;
             }
