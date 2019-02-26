@@ -55,6 +55,11 @@ export const getItemsCount = createSelector(
     state => state ? state.size : 0
 );
 
+export const getCurrentKey = createSelector(
+    getUiState,
+    state => state.selectedKey
+);
+
 export const getCurrentIndex = createSelector(
     getAllItems,
     getUiState,

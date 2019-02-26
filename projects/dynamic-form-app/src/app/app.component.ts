@@ -12,8 +12,11 @@ export class AppComponent {
 
     schemaRetrieve = new SchemaRetrieve({
         url: location + '/assets/json/schema.json',
-        method: 'get'
-    }, null, (err, result) => {
+        method: 'get',
+    }, (request) => {
+        console.log('Before schema', request);
+    },
+    (err, result) => {
         console.log('After get schema', err, result);
     });
 

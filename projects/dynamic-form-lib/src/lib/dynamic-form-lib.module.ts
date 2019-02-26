@@ -22,6 +22,7 @@ import { FormListComponent } from './components/list/form-list.component';
 import { EffectsModule } from '@ngrx/effects';
 import { SchemaEffects } from './effects/schema.effect';
 import { EventsEffects } from './effects/events.effects';
+import { DynamicGridService } from './services/dynamic-grid.service';
 
 
 @NgModule({

@@ -87,23 +87,28 @@
         "options": [
             {
                 "key": "AG",
-                "value": "Agrigento"
+                "value": "Agrigento",
+                "group": "A"
             },
             {
                 "key": "AL",
-                "value": "Alessandria"
+                "value": "Alessandria",
+                "group": "A"
             },
             {
                 "key": "AN",
-                "value": "Ancona"
+                "value": "Ancona",
+                "group": "A"
             },
             {
                 "key": "BT",
-                "value": "Barletta"
+                "value": "Barletta",
+                "group": "B"
             },
             {
                 "key": "BL",
-                "value": "Belluno"
+                "value": "Belluno",
+                "group": "B"
             }
         ]
     },
@@ -126,23 +131,28 @@
         "options": [
             {
                 "key": "AG",
-                "value": "Agrigento"
+                "value": "Agrigento",
+                "group": "A"
             },
             {
                 "key": "AL",
-                "value": "Alessandria"
+                "value": "Alessandria",
+                "group": "A"
             },
             {
                 "key": "AN",
-                "value": "Ancona"
+                "value": "Ancona",
+                "group": "A"
             },
             {
                 "key": "BT",
-                "value": "Barletta"
+                "value": "Barletta",
+                "group": "B"
             },
             {
                 "key": "BL",
-                "value": "Belluno"
+                "value": "Belluno",
+                "group": "B"
             }
         ]
     }
