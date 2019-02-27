@@ -1,6 +1,7 @@
 import { DataEffects } from './effects/data.effect';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { DynamicFormLibComponent } from './dynamic-form-lib.component';
 import 'hammerjs';
@@ -22,7 +23,6 @@ import { FormListComponent } from './components/list/form-list.component';
 import { EffectsModule } from '@ngrx/effects';
 import { SchemaEffects } from './effects/schema.effect';
 import { EventsEffects } from './effects/events.effects';
-import { DynamicGridService } from './services/dynamic-grid.service';
 
 
 @NgModule({
@@ -39,6 +39,7 @@ import { DynamicGridService } from './services/dynamic-grid.service';
     FormListComponent
 ],
   imports: [
+      BrowserModule,
     BrowserAnimationsModule,
     ReactiveFormsModule,
     HttpClientModule,

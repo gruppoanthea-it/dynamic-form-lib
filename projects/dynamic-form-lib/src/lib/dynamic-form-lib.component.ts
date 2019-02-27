@@ -1,6 +1,6 @@
 import { LibraryState } from './models/store.interface';
 import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
-import { IFormStruct } from './models/form-struct/form-struct.interface';
+import { IFormStruct } from './models/struct/struct.interface';
 import { InvalidStructError, InvalidSchemaRetrieveError } from './models/exceptions';
 import { Store, select } from '@ngrx/store';
 import { DataFetch } from './actions/data.actions';
@@ -15,7 +15,7 @@ import { EventResult } from './actions/events.actions';
 @Component({
   selector: 'df-dynamic-form',
   template: `
-    <div class="df-form-container">
+    <div class="df-form-container" (swipe)="onSwipe($event)">
         <ng-container *ngIf="loadingSchema === true">
             <mat-toolbar color="primary">
                 <mat-toolbar-row></mat-toolbar-row>
@@ -131,6 +131,16 @@ export class DynamicFormLibComponent implements OnInit {
             this.tabIndex = 1;
         } else {
             this.tabIndex = 0;
+        }
+    }
+
+    onSwipe(evt) {
+        const x = Math.abs(evt.deltaX) > 40 ? (evt.deltaX > 0 ? 'right' : 'left') : '';
+        if (x === 'right' && this.tabIndex === 1) {
+            this.onChangeView();
+        }
+        if (x === 'left' && this.tabIndex === 0) {
+            this.onChangeView();
         }
     }
 }

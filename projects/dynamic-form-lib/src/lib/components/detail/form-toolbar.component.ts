@@ -21,22 +21,26 @@ import { DynamicGridService } from '../../services/dynamic-grid.service';
                     <span>{{formSchema.name}}</span>
                     <span class="row-count">Riga {{currentIndex || 0}} di {{(totalCount$ | async) || 0}}</span>
                 </div>
+                <div fxHide.gt-xs="true" style="flex: 1 auto"></div>
+                <button fxHide.gt-xs="true" mat-icon-button [matMenuTriggerFor]="formMenu">
+                    <mat-icon aria-label="Menu">menu</mat-icon>
+                </button>
             </mat-toolbar-row>
-            <mat-toolbar-row class="row-border">
+            <mat-toolbar-row class="row-border" fxHide.lt-sm="true">
                 <button (click)="changeView.emit()" *ngIf="formSchema.type === 'both'" mat-icon-button>
                     <mat-icon aria-label="Change View">{{tabIndex === 1 ? 'view_list' : 'create'}}</mat-icon>
                 </button>
                 <mat-divider [vertical]="true"></mat-divider>
-                <button [disabled]="currentIndex === 0 || currentIndex === 1"
+                <button *ngIf="tabIndex === 1" [disabled]="currentIndex === 0 || currentIndex === 1"
                 (click)="movePrevCommand()" mat-icon-button>
                     <mat-icon aria-label="Move Previous">navigate_before</mat-icon>
                 </button>
-                <button [disabled]="currentIndex === 0 || data.length === currentIndex"
+                <button *ngIf="tabIndex === 1" [disabled]="currentIndex === 0 || data.length === currentIndex"
                 (click)="moveNextCommand()" mat-icon-button>
                     <mat-icon aria-label="Move Next">navigate_next</mat-icon>
                 </button>
                 <mat-divider [vertical]="true"></mat-divider>
-                <button (click)="resetFormCommand()" *ngIf="isFormModified$ | async" mat-icon-button>
+                <button (click)="resetFormCommand()" [disabled]="!(isFormModified$ | async)" mat-icon-button>
                     <mat-icon aria-label="Reset Form">undo</mat-icon>
                 </button>
                 <button (click)="addItemCommand()" mat-icon-button>
@@ -47,6 +51,20 @@ import { DynamicGridService } from '../../services/dynamic-grid.service';
                 </button>
             </mat-toolbar-row>
         </mat-toolbar>
+        <mat-menu #formMenu="matMenu">
+            <button mat-menu-item [disabled]="!(isFormModified$ | async)">
+                <mat-icon>undo</mat-icon>
+                <span>Annulla Modifiche</span>
+              </button>
+            <button mat-menu-item>
+                <mat-icon>add</mat-icon>
+                <span>Inserisci</span>
+            </button>
+            <button mat-menu-item>
+                <mat-icon>delete</mat-icon>
+                <span>Elimina</span>
+            </button>
+        </mat-menu>
     `,
     styles: [`
         mat-divider {

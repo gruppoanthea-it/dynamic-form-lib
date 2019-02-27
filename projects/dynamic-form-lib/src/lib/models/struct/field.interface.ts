@@ -1,17 +1,16 @@
-import { IInputField, ICheckBoxField } from './form-field.interface';
-import { ValidatorFn } from '@angular/forms';
+import { Validator } from '@angular/forms';
 import { Type } from '@angular/core';
 
-export interface IBaseField {
+export interface BaseFormField {
     name: string;
     type: 'input' | 'checkbox' | 'radio' | 'autocomplete' | 'select' | 'custom';
     component?: Type<{}>;
     label?: string;
     placeholder?: string;
-    grid?: IGrid;
+    grid?: Grid;
 }
 
-export interface IGrid {
+export interface Grid {
     xs?: number;
     sm?: number;
     md?: number;
@@ -20,7 +19,7 @@ export interface IGrid {
 }
 
 export interface IFieldError {
-    validator: ValidatorFn;
+    validator: Validator.;
     key: string;
     message: string;
     priority: number;
