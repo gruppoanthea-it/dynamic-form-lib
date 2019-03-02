@@ -1,4 +1,4 @@
-import { IFormStruct } from './form-struct/form-struct.interface';
+import { Struct } from './struct/struct.interface';
 import { Entity } from './common.interface';
 
 export const STORE_NAME = 'dynamic_form';
@@ -34,5 +34,5 @@ export interface EntityData {
 export interface SchemaData {
     loading: boolean;
     loaded: boolean;
-    item: IFormStruct;
+    item: Struct;
 }

@@ -2,6 +2,14 @@ import { HttpHeaders } from '@angular/common/http';
 import { UUID } from 'angular2-uuid';
 import { deepCopy } from '../utility/utility.functions';
 
+export interface Grid {
+    xs?: number;
+    sm?: number;
+    md?: number;
+    lg?: number;
+    xl?: number;
+}
+
 export interface RequestOptions {
     url: string;
     method: 'get' | 'post' | 'delete' | 'update';

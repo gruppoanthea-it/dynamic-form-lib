@@ -7,7 +7,7 @@ export class DataRetrieve {
                 public onGetData?: (request: HttpRequest<any>) => void,
                 public afterGetData?: (error: Error, body: any) => void) {
                     if (!request) {
-                        throw new InvalidSchemaRetrieveError('Path or request options is required');
+                        throw new InvalidSchemaRetrieveError('Request options is required');
                     }
                 }
 }

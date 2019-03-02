@@ -1,4 +1,4 @@
-export * from './struct/field.interface';
+export * from './struct/form-field.interface';
 export * from './struct/struct.interface';
 export * from './exceptions';
 export * from './data.retrieve';

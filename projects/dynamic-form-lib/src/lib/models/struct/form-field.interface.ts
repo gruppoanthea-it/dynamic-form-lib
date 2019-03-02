@@ -1,25 +1,17 @@
-import { Validator } from '@angular/forms';
-import { Type } from '@angular/core';
+import { ValueOptionRetrieve } from '../valueoption.retrieve';
+import { Grid } from '../common.interface';
 
 export interface BaseFormField {
     name: string;
     type: 'input' | 'checkbox' | 'radio' | 'autocomplete' | 'select' | 'custom';
-    component?: Type<{}>;
+    component?: string;
     label?: string;
     placeholder?: string;
     grid?: Grid;
 }
 
-export interface Grid {
-    xs?: number;
-    sm?: number;
-    md?: number;
-    lg?: number;
-    xl?: number;
-}
-
 export interface IFieldError {
-    validator: Validator.;
+    validator: 'required' | string;
     key: string;
     message: string;
     priority: number;
@@ -31,7 +23,7 @@ export interface ValueOption {
     group?: string;
 }
 
-export interface IInputField extends IBaseField {
+export interface IInputField extends BaseFormField {
     inputType: 'color' | 'date' | 'datetime-local' | 'email' | 'month' | 'number'
     | 'password' | 'search' | 'tel' | 'text' | 'time' | 'url' | 'week';
     maxLength?: number;
@@ -39,26 +31,27 @@ export interface IInputField extends IBaseField {
     validators?: IFieldError[];
 }
 
-export interface ICheckBoxField extends IBaseField {
+export interface ICheckBoxField extends BaseFormField {
     labelPosition: 'before' | 'after';
 }
 
-export interface IRadioField extends IBaseField {
+export interface IRadioField extends BaseFormField {
     labelPosition: 'before' | 'after';
     orientation: 'vertical' | 'horizontal';
-    options: ValueOption[];
+    options: ValueOption[] | ValueOptionRetrieve;
 }
 
 export interface IAutoCompleteField extends IInputField {
-    options?: ValueOption[];
+    options?: ValueOption[] | ValueOptionRetrieve;
 }
 
-export interface ISelectField extends IBaseField {
+export interface ISelectField extends BaseFormField {
     multiple: boolean;
     hintText?: string;
     emptyText?: string;
     validators?: IFieldError[];
-    options?: ValueOption[];
+    options?: ValueOption[] | ValueOptionRetrieve;
 }
 
-export type FormField = IInputField | ICheckBoxField | IRadioField | IAutoCompleteField | ISelectField;
+export type FormField = IInputField | ICheckBoxField |
+IRadioField | IAutoCompleteField | ISelectField;

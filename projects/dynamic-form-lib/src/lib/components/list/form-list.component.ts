@@ -1,8 +1,8 @@
-import { getAllItems, getUiState } from './../../reducers/selectors';
+import { getAllItems, getUiState, getListSchema } from './../../reducers/selectors';
 import { LibraryState } from './../../models/store.interface';
 import { Component, OnInit } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
-import { IFormStruct } from '../../models';
+import { Struct, List } from '../../models';
 import { Store, select } from '@ngrx/store';
 import { getSchema } from '../../reducers/selectors';
 import { UiChangeRow } from '../../actions/ui.actions';
@@ -13,7 +13,7 @@ import { Entity } from '../../models/common.interface';
     template: `
     <div style="overflow: auto; height: 100%">
         <table mat-table [dataSource]="data" class="mat-elevation-z8">
-            <ng-container *ngFor="let field of formSchema.fields" [matColumnDef]="field.name">
+            <ng-container *ngFor="let field of struct.fields" [matColumnDef]="field.name">
                 <th mat-header-cell *matHeaderCellDef>{{field.label || field.placeholder}}</th>
                 <td mat-cell *matCellDef="let element"> {{element.data[field.name]}} </td>
             </ng-container>
@@ -34,22 +34,21 @@ import { Entity } from '../../models/common.interface';
 })
 export class FormListComponent implements OnInit {
 
-    formSchema: IFormStruct;
+    struct: List;
     data: any[];
 
     private columns: string[];
     private selectedKey: string;
 
-    constructor(private mediaObserver: MediaObserver,
-                private store: Store<LibraryState>) {
+    constructor(private store: Store<LibraryState>) {
         this.columns = [];
     }
 
     ngOnInit() {
-        this.store.pipe(select(getSchema))
+        this.store.pipe(select(getListSchema))
             .subscribe((value) => {
-                if (value.loaded) {
-                    this.formSchema = value.item;
+                if (value) {
+                    this.struct = value;
                     this.init();
                 }
             });
@@ -64,7 +63,7 @@ export class FormListComponent implements OnInit {
     }
 
     private init() {
-        this.formSchema.fields.forEach((field) => {
+        this.struct.fields.forEach((field) => {
             this.columns.push(field.name);
         });
     }

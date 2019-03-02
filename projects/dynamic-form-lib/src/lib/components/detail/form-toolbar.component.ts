@@ -1,6 +1,6 @@
 import { map } from 'rxjs/operators';
 import { Component, OnInit, Output, Input, EventEmitter } from '@angular/core';
-import { IFormStruct } from '../../models';
+import { Struct } from '../../models';
 import { Store, select } from '@ngrx/store';
 import { LibraryState } from '../../models/store.interface';
 import { getSchema, getDataChanged, getItemsCount, getAllItems, getCurrentIndex } from '../../reducers/selectors';
@@ -9,16 +9,14 @@ import { Event } from '../../actions/events.actions';
 import { Observable } from 'rxjs';
 import { Entity } from '../../models/common.interface';
 import { UiChangeRow } from '../../actions/ui.actions';
-import { MediaObserver } from '@angular/flex-layout';
-import { DynamicGridService } from '../../services/dynamic-grid.service';
 
 @Component({
     selector: 'df-form-toolbar',
     template: `
-        <mat-toolbar *ngIf="formSchema$ | async as formSchema" [color]="formSchema.toolbarColor">
+        <mat-toolbar *ngIf="struct$ | async as struct" [color]="struct.toolbarColor">
             <mat-toolbar-row>
                 <div class="title-container">
-                    <span>{{formSchema.name}}</span>
+                    <span>{{struct.name}}</span>
                     <span class="row-count">Riga {{currentIndex || 0}} di {{(totalCount$ | async) || 0}}</span>
                 </div>
                 <div fxHide.gt-xs="true" style="flex: 1 auto"></div>
@@ -27,7 +25,7 @@ import { DynamicGridService } from '../../services/dynamic-grid.service';
                 </button>
             </mat-toolbar-row>
             <mat-toolbar-row class="row-border" fxHide.lt-sm="true">
-                <button (click)="changeView.emit()" *ngIf="formSchema.type === 'both'" mat-icon-button>
+                <button (click)="changeView.emit()" *ngIf="struct.type === 'both'" mat-icon-button>
                     <mat-icon aria-label="Change View">{{tabIndex === 1 ? 'view_list' : 'create'}}</mat-icon>
                 </button>
                 <mat-divider [vertical]="true"></mat-divider>
@@ -96,15 +94,14 @@ export class FormToolbarComponent implements OnInit {
     @Input() tabIndex: number;
     @Output() changeView: EventEmitter<void>;
     private isFormModified$: Observable<boolean>;
-    private formSchema$: Observable<IFormStruct>;
+    private struct$: Observable<Struct>;
     private currentIndex: number;
     private totalCount$: Observable<number>;
 
     // Only to do next and prev
     private data: Entity[];
 
-    constructor(private store: Store<LibraryState>,
-        private gridService: DynamicGridService) {
+    constructor(private store: Store<LibraryState>) {
         this.changeView = new EventEmitter();
     }
 
@@ -112,7 +109,7 @@ export class FormToolbarComponent implements OnInit {
         this.store.pipe(select(getCurrentIndex))
             .subscribe(value => this.currentIndex = value);
         this.totalCount$ = this.store.pipe(select(getItemsCount));
-        this.formSchema$ = this.store.pipe(select(getSchema), map(value => value.item));
+        this.struct$ = this.store.pipe(select(getSchema), map(value => value.item));
         this.isFormModified$ = this.store.pipe(select(getDataChanged));
         this.store.pipe(select(getAllItems))
             .subscribe(value => this.data = value);

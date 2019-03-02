@@ -23,6 +23,16 @@ export const getSchema = createSelector(
     state => state.schema
 );
 
+export const getListSchema = createSelector(
+    getSchema,
+    state => state.loaded ? state.item.list : null
+);
+
+export const getDetailSchema = createSelector(
+    getSchema,
+    state => state.loaded ? state.item.form : null
+)
+
 export const getDataEntity = createSelector(
     getStoreData,
     state => state.data
