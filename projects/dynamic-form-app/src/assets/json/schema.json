@@ -1,160 +1,138 @@
 {
     "id": "login",
-    "type": "both",
-    "name": "Login",
-    "fields": [
-      {
-          "name": "username",
-          "type": "input",
-          "inputType": "text",
-          "maxLength": 50,
-          "placeholder": "Username",
-          "hintText": "Inserisci il tuo username",
-          "validators": [
-              {
-                  "validator": "Validators.required",
-                  "key": "required",
-                  "message": "Lo username è obbligatorio",
-                  "priority": 0
+    "type": "BOTH",
+    "displayOptions": {
+        "caption": "Login"
+    },
+    "form" : {
+        "fields": [
+            {
+                "name": "username",
+                "type": "input",
+                "inputType": "text",
+                "maxLength": 50,
+                "placeholder": "Username",
+                "hintText": "Inserisci il tuo username",
+                "validators": [
+                    {
+                        "validator": "Validators.required",
+                        "key": "required",
+                        "message": "Lo username è obbligatorio",
+                        "priority": 0
+                    }
+                ],
+                "grid": {
+                    "lg": 12
+                }
+            },
+            {
+              "name": "password",
+              "type": "input",
+              "inputType": "password",
+              "placeholder": "Password",
+              "validators": [
+                  {
+                      "validator": "Validators.required",
+                      "key": "required",
+                      "message": "La password è obbligatoria",
+                      "priority": 0
+                  }
+              ],
+              "grid": {
+                  "lg": 12
               }
-          ],
-          "grid": {
-              "lg": 12
+          },
+          {
+              "name": "check",
+              "type": "checkbox",
+              "label": "Checkbox",
+              "grid": {
+                  "lg": 12
+              },
+              "labelPosition": "before"
+          },
+          {
+              "name": "radio",
+              "type": "radio",
+              "label": "Radio",
+              "grid": {
+                  "lg": 12
+              },
+              "labelPosition": "after",
+              "orientation": "horizontal",
+              "options": [
+                  {
+                      "key": "1",
+                      "value": "Option 1"
+                  },
+                  {
+                      "key": "2",
+                      "value": "Option 2"
+                  }
+              ]
+          },
+          {
+              "name": "autocomplete",
+              "type": "autocomplete",
+              "inputType": "text",
+              "placeholder": "Autocomplete",
+              "validators": [
+                  {
+                      "validator": "Validators.required",
+                      "key": "required",
+                      "message": "È necessario inserire un valore",
+                      "priority": 0
+                  }
+              ],
+              "grid": {
+                  "lg": 12
+              }
+          },
+          {
+              "name": "select",
+              "type": "select",
+              "multiple" : true,
+              "placeholder": "Select",
+              "validators": [
+                  {
+                      "validator": "Validators.required",
+                      "key": "required",
+                      "message": "È necessario selezionare un valore",
+                      "priority": 0
+                  }
+              ],
+              "grid": {
+                  "lg": 12
+              }
           }
-      },
-      {
-        "name": "password",
-        "type": "input",
-        "inputType": "password",
-        "placeholder": "Password",
-        "validators": [
-            {
-                "validator": "Validators.required",
-                "key": "required",
-                "message": "La password è obbligatoria",
-                "priority": 0
-            }
-        ],
-        "grid": {
-            "lg": 12
-        }
+        ]        
     },
-    {
-        "name": "check",
-        "type": "checkbox",
-        "label": "Checkbox",
-        "grid": {
-            "lg": 12
-        },
-        "labelPosition": "before"
-    },
-    {
-        "name": "radio",
-        "type": "radio",
-        "label": "Radio",
-        "grid": {
-            "lg": 12
-        },
-        "labelPosition": "after",
-        "orientation": "horizontal",
-        "options": [
+    "list": {
+        "fields": [
             {
-                "key": "1",
-                "value": "Option 1"
+                "header": "Username",
+                "name": "username"
             },
             {
-                "key": "2",
-                "value": "Option 2"
-            }
-        ]
-    },
-    {
-        "name": "autocomplete",
-        "type": "autocomplete",
-        "inputType": "text",
-        "placeholder": "Autocomplete",
-        "validators": [
-            {
-                "validator": "Validators.required",
-                "key": "required",
-                "message": "È necessario inserire un valore",
-                "priority": 0
-            }
-        ],
-        "grid": {
-            "lg": 12
-        },
-        "options": [
-            {
-                "key": "AG",
-                "value": "Agrigento",
-                "group": "A"
+                "header": "Password",
+                "name": "password"
             },
             {
-                "key": "AL",
-                "value": "Alessandria",
-                "group": "A"
+                "header": "Checkbox",
+                "name": "check"
             },
             {
-                "key": "AN",
-                "value": "Ancona",
-                "group": "A"
+                "header": "Radio Button",
+                "name": "radio"
             },
             {
-                "key": "BT",
-                "value": "Barletta",
-                "group": "B"
+                "header": "Autocomplete",
+                "name": "autocomplete"
             },
             {
-                "key": "BL",
-                "value": "Belluno",
-                "group": "B"
-            }
-        ]
-    },
-    {
-        "name": "select",
-        "type": "select",
-        "multiple" : true,
-        "placeholder": "Select",
-        "validators": [
-            {
-                "validator": "Validators.required",
-                "key": "required",
-                "message": "È necessario selezionare un valore",
-                "priority": 0
-            }
-        ],
-        "grid": {
-            "lg": 12
-        },
-        "options": [
-            {
-                "key": "AG",
-                "value": "Agrigento",
-                "group": "A"
-            },
-            {
-                "key": "AL",
-                "value": "Alessandria",
-                "group": "A"
-            },
-            {
-                "key": "AN",
-                "value": "Ancona",
-                "group": "A"
-            },
-            {
-                "key": "BT",
-                "value": "Barletta",
-                "group": "B"
-            },
-            {
-                "key": "BL",
-                "value": "Belluno",
-                "group": "B"
+                "header": "Select",
+                "name": "select"
             }
         ]
     }
-  ]
 }

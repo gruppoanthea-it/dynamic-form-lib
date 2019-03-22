@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { FormField, IInputField, ICheckBoxField } from '../../../models';
+import { ICheckBoxField } from '../../../models';
 
 @Component({
     selector: 'df-field-checkbox',

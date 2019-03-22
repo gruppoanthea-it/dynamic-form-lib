@@ -8,16 +8,8 @@ import { throwError, of } from 'rxjs';
 import { UiError, UiChangeRow } from '../actions/ui.actions';
 import { DataFetch, DataSuccess, DataError } from '../actions/data.actions';
 import * as _ from 'lodash';
-import { UUID } from 'angular2-uuid';
 import { Entity } from '../models/common.interface';
-
-interface Success {
-    data: any;
-}
-
-interface Error {
-    message: string;
-}
+import { Paging } from '../models/store.interface';
 
 @Injectable()
 export class DataEffects {
@@ -26,7 +18,7 @@ export class DataEffects {
   loadData$ = this.actions$
     .pipe(
       ofType(ActionTypes.DATA_FETCH),
-      mergeMap((action: DataFetch) => this.dfService.retrieveData(action.options)
+      mergeMap((action: DataFetch) => this.dfService.retrieveData(action.formId, action.options)
         .pipe(
             defaultIfEmpty(new HttpResponse<any>({
                 body: null,
@@ -35,28 +27,46 @@ export class DataEffects {
             filter(response => response.type === HttpEventType.Response),
             map((response: HttpResponse<any>) => {
                 if (response.status === 200) {
-                    return response.body as [];
+                    return response.body;
                 } else {
                     throwError(response.body || (response.status + ' - ' + response.statusText));
                 }
             }),
-            map(item => item.map((el: any) => new Entity(el))),
-            map(items => new Map<string, Entity>(
-                items.map(el => [el.Id, el] as [string, Entity])
-            )),
-            switchMap((items: Map<string, Entity>) => {
+            map(body => {
+                const paging = body.Paging;
+                if (!paging) {
+                    body.Data = body;
+                }
+                const items = body.Data.map((el: any) => new Entity(el));
+                return {
+                    Paging: paging,
+                    Data: items
+                };
+            }),
+            map(content => {
+                return {
+                    Paging: content.Paging,
+                    Data: new Map<string, Entity>(
+                        content.Data.map(el => [el.Id, el] as [string, Entity]))
+                };
+            }),
+            switchMap((content: {Paging: Paging, Data: Map<string, Entity>}) => {
                 let first = null;
-                for (let i = 0; i < items.size; i++) {
-                    const item = items.keys().next();
+                for (let i = 0; i < content.Data.size; i++) {
+                    const item = content.Data.keys().next();
                     first = item.value;
                     break;
                 }
                 if (action.options.afterGetData) {
-                    action.options.afterGetData(null, items);
+                    action.options.afterGetData(null, content);
                 }
+                const dataSuccess = new DataSuccess(content.Data, content.Paging);
+                dataSuccess.formId = action.formId;
+                const uiChangeRow = new UiChangeRow(first);
+                uiChangeRow.formId = action.formId;
                 return [
-                    new DataSuccess(items),
-                    new UiChangeRow(first)
+                    dataSuccess,
+                    uiChangeRow
                 ];
             }),
             catchError((error) => {
@@ -69,9 +79,13 @@ export class DataEffects {
                 if (action.options.afterGetData) {
                     action.options.afterGetData(error, null);
                 }
+                const dataError = new DataError(err);
+                dataError.formId = action.formId;
+                const uiError = new UiError('DATA', err);
+                uiError.formId = action.formId;
                 return [
-                    new DataError(err),
-                    new UiError('DATA', err)
+                    dataError,
+                    uiError
                 ];
             })
         ))

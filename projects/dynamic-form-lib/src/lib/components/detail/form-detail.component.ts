@@ -3,24 +3,20 @@ import { Component, OnInit} from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import { FormGroup, FormControl } from '@angular/forms';
 import { MediaObserver, MediaChange } from '@angular/flex-layout';
-import { IFormStruct } from '../../models';
-import { deepCopy, equals } from '../../utility/utility.functions';
+import { Struct } from '../../models';
 import { LibraryState } from '../../models/store.interface';
-import { DynamicFormService } from '../../services/dynamic-form.service';
 import { DataUpdate } from '../../actions/data.actions';
 import { Entity } from '../../models/common.interface';
-import { EventInsert } from '../../models/events.interface';
-import { Event } from '../../actions/events.actions';
+import { DispatcherService } from '../../dispatcher.service';
 
 @Component({
     selector: 'df-form-detail',
     template: `
       <form [formGroup]="form" *ngIf="formSchema">
             <div fxLayout="row wrap" fxLayoutGap="2rem grid">
-                <df-field *ngFor="let field of formSchema.fields" [field]="field"
+                <df-field *ngFor="let field of formSchema.form.fields" [field]="field"
                 [control]="form.get(field.name)" [fxFlex]="grids[field.name] / 12 * 100 + '%'"></df-field>
             </div>
-            <button mat-button (click)="submit()">Submit</button>
       </form>
     `,
     styles: [`
@@ -32,7 +28,7 @@ import { Event } from '../../actions/events.actions';
 })
 export class FormDetailComponent implements OnInit {
 
-    private formSchema: IFormStruct;
+    private formSchema: Struct;
     private data: Entity;
     private dataLoaded: boolean;
     private form: FormGroup;
@@ -43,7 +39,8 @@ export class FormDetailComponent implements OnInit {
     private currentBP: string;
 
     constructor(private mediaObserver: MediaObserver,
-         private store: Store<LibraryState>) {
+         private store: Store<LibraryState>,
+         private dispatchService: DispatcherService) {
         this.mediaObserver.media$.subscribe((media: MediaChange) => {
             this.currentBP = media.mqAlias;
             this.adjustGrid();
@@ -53,19 +50,19 @@ export class FormDetailComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.store.pipe(select(getSchema))
+        this.dispatchService.getSelector(getSchema)
             .subscribe((value) => {
                 if (value.loaded) {
                     this.formSchema = value.item;
                     this.initForm();
                 }
             });
-        this.store.pipe(select(getSelectedItem))
+        this.dispatchService.getSelector(getSelectedItem)
             .subscribe(value => {
                 this.data = value;
                 this.parseData();
             });
-        this.store.pipe(select(getDataEntity))
+        this.dispatchService.getSelector(getDataEntity)
             .subscribe(value => {
                 this.dataLoaded = value.loaded;
                 this.parseData();
@@ -86,7 +83,7 @@ export class FormDetailComponent implements OnInit {
     private initForm() {
         const controls = {};
         this.grids = {};
-        this.formSchema.fields.forEach((el) => {
+        this.formSchema.form.fields.forEach((el) => {
             const control = new FormControl();
             controls[el.name] = control;
         });
@@ -99,7 +96,7 @@ export class FormDetailComponent implements OnInit {
         if (!this.formSchema) {
             return;
         }
-        this.formSchema.fields.forEach((el) => {
+        this.formSchema.form.fields.forEach((el) => {
             if (!el.grid) {
                 this.grids[el.name] = 12;
                 return;
@@ -128,13 +125,9 @@ export class FormDetailComponent implements OnInit {
                         this.data.data[key] = values[key];
                     }
                 }
-                this.store.dispatch(new DataUpdate(this.data));
+                this.dispatchService.dispatchAction(new DataUpdate(this.data));
             }
         });
-    }
-
-    submit() {
-        console.log(this.form);
     }
 
     resetForm() {

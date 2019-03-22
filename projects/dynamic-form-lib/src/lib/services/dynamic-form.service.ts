@@ -3,6 +3,9 @@ import { HttpClient, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { EventBase } from '../models/events.interface';
+import { ValueOptionRetrieve } from '../models';
+import { Paging } from '../models/store.interface';
+import { stringToKeyValue } from '@angular/flex-layout/extended/typings/style/style-transforms';
 
 @Injectable({
     providedIn: 'root'
@@ -10,37 +13,70 @@ import { EventBase } from '../models/events.interface';
 export class DynamicFormService {
 
     public eventNotifier$: Subject<EventBase>;
+    public valueOptionRetrieve: Map<string, ValueOptionRetrieve>;
+    private dataRetrieveOptions: Map<string, DataRetrieve>;
+
     constructor(private http: HttpClient) {
         this.eventNotifier$ = new Subject();
+        this.dataRetrieveOptions = new Map<string, DataRetrieve>();
+    }
+
+    getDefaultDataRetrieve(formId: string) {
+        return this.dataRetrieveOptions.get(formId);
+    }
+
+    setValueOptionRetrieve(options: Map<string, ValueOptionRetrieve>) {
+        this.valueOptionRetrieve = options;
     }
 
     retrieveSchema(options: SchemaRetrieve) {
         // Creo la richiesta per lo schema
-        const schemaRequestDef = new HttpRequest(options.request.method,
+        let schemaRequestDef = new HttpRequest(options.request.method,
             options.request.url, options.request.body, {
                 headers: options.request.headers
             });
         if (options.onGetSchema) {
-            options.onGetSchema(schemaRequestDef);
+            schemaRequestDef = options.onGetSchema(schemaRequestDef);
         }
         // Creo l'observable per la richiesta dello schema
         return this.http.request(schemaRequestDef);
     }
 
-    retrieveData(options: DataRetrieve) {
-        if (!options) {
+    retrieveData(formId: string, options: DataRetrieve) {
+        if (!options && !this.dataRetrieveOptions) {
             return null;
         }
+        if (!this.dataRetrieveOptions.has(formId)) {
+            this.dataRetrieveOptions.set(formId, options);
+        }
+        if (!options) {
+            options = this.dataRetrieveOptions.get(formId);
+        }
         // Creo la richiesta per i dati
-        const dataRequestDef = new HttpRequest(options.request.method,
+        let dataRequestDef = new HttpRequest(options.request.method,
             options.request.url, options.request.body, {
                 headers: options.request.headers
             });
         if (options.onGetData) {
-            options.onGetData(dataRequestDef);
+            dataRequestDef = options.onGetData(dataRequestDef, options.paging);
         }
         // Creo l'observable per la richiesta dei dati
         return this.http.request(dataRequestDef);
+    }
+
+    retrieveOptions(fieldName: string) {
+        if (!this.valueOptionRetrieve.has(fieldName)) {
+            return null;
+        }
+        const options = this.valueOptionRetrieve.get(fieldName);
+        let valueOptionRequest = new HttpRequest(options.request.method,
+            options.request.url, options.request.body, {
+                headers: options.request.headers
+            });
+        if (options.onGetOptions) {
+            valueOptionRequest = options.onGetOptions(valueOptionRequest);
+        }
+        return this.http.request(valueOptionRequest);
     }
 
     notifyCommand(event: EventBase) {

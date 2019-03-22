@@ -1,16 +1,19 @@
-import { LibraryState } from './models/store.interface';
+import { LibraryState, SchemaData, UiState } from './models/store.interface';
 import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
-import { IFormStruct } from './models/struct/struct.interface';
+import { Struct, StructTypes } from './models/struct/struct.interface';
 import { InvalidStructError, InvalidSchemaRetrieveError } from './models/exceptions';
 import { Store, select } from '@ngrx/store';
 import { DataFetch } from './actions/data.actions';
 import { SchemaRetrieve } from './models/schema.retrieve';
 import { DataRetrieve } from './models/data.retrieve';
 import { SchemaFetch } from './actions/schema.actions';
-import { getSchema } from './reducers/selectors';
+import { getSchema, getUiState } from './reducers/selectors';
 import { DynamicFormService } from './services/dynamic-form.service';
-import { EventBase, EventOptions, EventTypes, EventReset, EventInsert, EventDelete } from './models/events.interface';
+import { EventBase, EventOptions, EventTypes, EventReset, EventInsert, EventDelete, EventSave } from './models/events.interface';
 import { EventResult } from './actions/events.actions';
+import { DispatcherService } from './dispatcher.service';
+import { ValueOptionRetrieve } from './models';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'df-dynamic-form',
@@ -23,17 +26,18 @@ import { EventResult } from './actions/events.actions';
             </mat-toolbar>
             <mat-spinner style="margin: 0 auto;"></mat-spinner>
         </ng-container>
-        <ng-container *ngIf="loadingSchema === false">
+        <ng-container *ngIf="schemaLoaded === true">
             <df-form-toolbar [tabIndex]="tabIndex"
             (changeView)="onChangeView()"></df-form-toolbar>
             <mat-tab-group class="hide-header" [selectedIndex]="tabIndex">
-                <mat-tab label="Dettaglio">
+                <mat-tab *ngIf="schema.type === 'BOTH' || schema.type === 'LIST'" label="Lista">
                     <df-form-list></df-form-list>
                 </mat-tab>
-                <mat-tab label="Lista">
+                <mat-tab *ngIf="schema.type === 'BOTH' || schema.type === 'DETAIL'" label="Dettaglio">
                     <df-form-detail></df-form-detail>
                 </mat-tab>
             </mat-tab-group>
+            <df-form-footer></df-form-footer>
         </ng-container>
     </div>
   `,
@@ -51,21 +55,27 @@ import { EventResult } from './actions/events.actions';
     }
     `
   ],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  providers: [DispatcherService]
 })
 export class DynamicFormLibComponent implements OnInit {
 
     @Input() schemaRetrieve: SchemaRetrieve;
     @Input() dataRetrieve: DataRetrieve;
     @Input() eventOptions: EventOptions;
+    @Input() valueOptionRetrieve: Map<string, ValueOptionRetrieve>;
 
-    private schema: IFormStruct;
+    private schema: Struct;
     private tabIndex: number;
     private loadingSchema: boolean;
+    private schemaLoaded: boolean;
 
     constructor(private store: Store<LibraryState>,
-        private formService: DynamicFormService) {
-        this.loadingSchema = true;
+        private formService: DynamicFormService,
+        private dispatcherService: DispatcherService,
+        private snackBar: MatSnackBar) {
+        this.loadingSchema = false;
+        this.schemaLoaded = false;
     }
 
     ngOnInit() {
@@ -73,17 +83,25 @@ export class DynamicFormLibComponent implements OnInit {
         if (!this.schemaRetrieve) {
             throw new InvalidSchemaRetrieveError('Missing informations to retrieve schema');
         }
+        this.formService.setValueOptionRetrieve(this.valueOptionRetrieve);
         // Check when finish loading
-        this.store.pipe(select(getSchema))
-            .subscribe((value) => {
+        this.dispatcherService.getSelector(getSchema)
+            .subscribe((value: SchemaData) => {
                 this.loadingSchema = value.loading;
+                this.schemaLoaded = value.loaded;
                 if (value.loaded) {
                     this.schema = value.item;
                     this.validateSchema();
                 }
             });
-        this.store.dispatch(new SchemaFetch(this.schemaRetrieve));
-        this.store.dispatch(new DataFetch(this.dataRetrieve));
+        this.dispatcherService.getSelector(getUiState)
+            .subscribe((value: UiState)  => {
+                if (value.error) {
+                    this.showError(value.error.message);
+                }
+            });
+        this.dispatcherService.dispatchAction(new SchemaFetch(this.schemaRetrieve));
+        this.dispatcherService.dispatchAction(new DataFetch(this.dataRetrieve));
         this.formService.eventNotifier$
             .subscribe((value) => {
                 this.dispatchEvent(value);
@@ -109,9 +127,14 @@ export class DynamicFormLibComponent implements OnInit {
                         this.eventOptions.OnEventDelete(<EventDelete>event);
                     }
                     break;
+                case EventTypes.EVENT_SAVE:
+                    if (this.eventOptions.OnEventSave) {
+                        this.eventOptions.OnEventSave(<EventSave>event);
+                    }
+                    break;
             }
         }
-        this.store.dispatch(new EventResult(event));
+        this.dispatcherService.dispatchAction(new EventResult(event));
     }
 
     private validateSchema = () => {
@@ -122,7 +145,7 @@ export class DynamicFormLibComponent implements OnInit {
     }
 
     private initValues() {
-        this.tabIndex = (this.schema.type === 'both' || this.schema.type === 'list')
+        this.tabIndex = (this.schema.type === StructTypes.BOTH || this.schema.type === StructTypes.LIST)
             ? 0 : 1;
     }
 
@@ -142,5 +165,13 @@ export class DynamicFormLibComponent implements OnInit {
         if (x === 'left' && this.tabIndex === 0) {
             this.onChangeView();
         }
+    }
+
+    showError(error: string) {
+        this.snackBar.open(error, null, {
+            duration: 5000,
+            horizontalPosition: 'right',
+            verticalPosition: 'top'
+        });
     }
 }

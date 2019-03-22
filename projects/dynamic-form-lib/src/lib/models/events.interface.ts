@@ -3,7 +3,8 @@ import { Entity } from './common.interface';
 export enum EventTypes {
     EVENT_RESET,
     EVENT_INSERT,
-    EVENT_DELETE
+    EVENT_DELETE,
+    EVENT_SAVE
 }
 
 export abstract class EventBase {
@@ -18,6 +19,13 @@ export interface EventOptions {
     OnEventReset?: (event: EventReset) => void;
     OnEventInsert?: (event: EventInsert) => void;
     OnEventDelete?: (event: EventDelete) => void;
+    OnEventSave?: (event: EventSave) => void;
+}
+
+export interface Changes {
+    inserted: Entity[];
+    updated: Entity[];
+    deleted: Entity[];
 }
 
 /**
@@ -42,6 +50,13 @@ export class EventInsert extends EventBase {
 export class EventDelete extends EventBase {
     readonly type = EventTypes.EVENT_DELETE;
     constructor(public item?: Entity) {
+        super();
+    }
+}
+
+export class EventSave extends EventBase {
+    readonly type = EventTypes.EVENT_SAVE;
+    constructor(public changes?: Changes) {
         super();
     }
 }

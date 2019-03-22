@@ -1,15 +1,15 @@
 import { Action } from '@ngrx/store';
-import { ActionTypes } from './types';
+import { ActionTypes, BaseAction } from './types';
 import { EventBase } from '../models/events.interface';
 
-export class Event implements Action {
+export class Event extends BaseAction implements Action {
     readonly type = ActionTypes.EVENT;
-    constructor(public event: EventBase) {}
+    constructor(public event: EventBase) { super (); }
 }
 
-export class EventResult implements Action {
+export class EventResult extends BaseAction implements Action {
     readonly type = ActionTypes.EVENT_RESULT;
-    constructor(public eventResult: EventBase) {}
+    constructor(public eventResult: EventBase) { super (); }
 }
 
 export type EventAction = Event | EventResult;

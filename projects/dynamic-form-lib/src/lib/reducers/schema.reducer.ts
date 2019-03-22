@@ -1,14 +1,7 @@
-import { SchemaData } from './../models/store.interface';
 import { SchemaActions } from '../actions/schema.actions';
 import { ActionTypes } from '../actions/types';
 
-const initialState: SchemaData = {
-    loading: false,
-    loaded: false,
-    item: null
-};
-
-export function reducerSchema(state = initialState, action: SchemaActions) {
+export function reducerSchema(state, action: SchemaActions) {
   switch (action.type) {
     case ActionTypes.SCHEMA_FETCH:
         if (state.loading) {

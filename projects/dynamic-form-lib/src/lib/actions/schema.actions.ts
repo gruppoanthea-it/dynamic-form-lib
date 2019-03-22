@@ -1,21 +1,21 @@
 import { SchemaRetrieve } from './../models/schema.retrieve';
 import { Action } from '@ngrx/store';
-import { IFormStruct } from '../models';
-import { ActionTypes } from './types';
+import { Struct } from '../models';
+import { ActionTypes, BaseAction } from './types';
 
-export class SchemaFetch implements Action {
+export class SchemaFetch extends BaseAction implements Action {
     readonly type = ActionTypes.SCHEMA_FETCH;
-    constructor(public options: SchemaRetrieve) {}
+    constructor(public options: SchemaRetrieve) { super (); }
 }
 
-export class SchemaError implements Action {
+export class SchemaError extends BaseAction implements Action {
     readonly type = ActionTypes.SCHEMA_ERROR;
-    constructor(public error: string) {}
+    constructor(public error: string) { super (); }
 }
 
-export class SchemaSuccess implements Action {
+export class SchemaSuccess extends BaseAction implements Action {
     readonly type = ActionTypes.SCHEMA_SUCCESS;
-    constructor(public item: IFormStruct) {}
+    constructor(public item: Struct) { super (); }
 }
 
 export type SchemaActions = SchemaFetch | SchemaError | SchemaSuccess;

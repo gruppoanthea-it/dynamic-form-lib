@@ -38,11 +38,11 @@ export interface ICheckBoxField extends BaseFormField {
 export interface IRadioField extends BaseFormField {
     labelPosition: 'before' | 'after';
     orientation: 'vertical' | 'horizontal';
-    options: ValueOption[] | ValueOptionRetrieve;
+    options: ValueOption[];
 }
 
 export interface IAutoCompleteField extends IInputField {
-    options?: ValueOption[] | ValueOptionRetrieve;
+    options?: ValueOption[];
 }
 
 export interface ISelectField extends BaseFormField {
@@ -50,7 +50,7 @@ export interface ISelectField extends BaseFormField {
     hintText?: string;
     emptyText?: string;
     validators?: IFieldError[];
-    options?: ValueOption[] | ValueOptionRetrieve;
+    options?: ValueOption[];
 }
 
 export type FormField = IInputField | ICheckBoxField |

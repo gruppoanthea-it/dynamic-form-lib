@@ -1,5 +1,5 @@
 {
-  "name": "dynamic-form-lib",
+  "name": "@tiuz/dynamic-form",
   "version": "0.0.1",
   "peerDependencies": {
     "@angular/animations": "^7.2.4",

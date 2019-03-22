@@ -1,14 +1,14 @@
 import { Action } from '@ngrx/store';
-import { ActionTypes } from './types';
+import { ActionTypes, BaseAction } from './types';
 
-export class UiError implements Action {
+export class UiError extends BaseAction implements Action {
     readonly type = ActionTypes.UI_ERROR;
-    constructor(public context: string, public message: string) {}
+    constructor(public context: string, public message: string) { super (); }
 }
 
-export class UiChangeRow implements Action {
+export class UiChangeRow extends BaseAction implements Action {
     readonly type = ActionTypes.UI_CHANGE_ROW;
-    constructor(public rowKey?: string) {}
+    constructor(public rowKey?: string) { super (); }
 }
 
 export type UiActions = UiError | UiChangeRow;

@@ -1,41 +1,47 @@
 import { Action } from '@ngrx/store';
-import { ActionTypes } from './types';
+import { ActionTypes, BaseAction } from './types';
 import { DataRetrieve } from '../models';
 import { Entity } from '../models/common.interface';
+import { Paging } from '../models/store.interface';
 
-export class DataFetch implements Action {
+export class DataFetch extends BaseAction implements Action {
     readonly type = ActionTypes.DATA_FETCH;
-    constructor(public options: DataRetrieve) {}
+    constructor(public options: DataRetrieve) { super(); }
 }
 
-export class DataError implements Action {
+export class DataError extends BaseAction implements Action {
     readonly type = ActionTypes.DATA_ERROR;
-    constructor(public error: string) {}
+    constructor(public error: string) { super (); }
 }
 
-export class DataSuccess implements Action {
+export class DataSuccess extends BaseAction implements Action {
     readonly type = ActionTypes.DATA_SUCCESS;
-    constructor(public items: Map<string, Entity>) {}
+    constructor(public items: Map<string, Entity>, public paging: Paging) { super (); }
 }
 
-export class DataUpdate implements Action {
+export class DataUpdate extends BaseAction implements Action {
     readonly type = ActionTypes.DATA_UPDATE;
-    constructor(public item: Entity) {}
+    constructor(public item: Entity) { super (); }
 }
 
-export class DataReset implements Action {
+export class DataReset extends BaseAction implements Action {
     readonly type = ActionTypes.DATA_RESET;
 }
 
-export class DataInsert implements Action {
+export class DataInsert extends BaseAction implements Action {
     readonly type = ActionTypes.DATA_INSERT;
-    constructor(public item: Entity) {}
+    constructor(public item: Entity) { super (); }
 }
 
-export class DataDelete implements Action {
+export class DataDelete extends BaseAction implements Action {
     readonly type = ActionTypes.DATA_DELETE;
-    constructor(public id: string) {}
+    constructor(public id: string) { super (); }
+}
+
+export class DataSave extends BaseAction implements Action {
+    readonly type = ActionTypes.DATA_SAVE;
 }
 
 export type DataActions = DataFetch | DataError |
- DataSuccess | DataUpdate | DataReset | DataInsert | DataDelete;
+ DataSuccess | DataUpdate | DataReset | DataInsert |
+ DataDelete | DataSave;

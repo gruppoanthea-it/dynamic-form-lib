@@ -1,0 +1,32 @@
+[
+    {
+        "key": "AG",
+        "value": "Agrigento",
+        "group": "A"
+    },
+    {
+        "key": "AL",
+        "value": "Alessandria",
+        "group": "A"
+    },
+    {
+        "key": "AN",
+        "value": "Ancona",
+        "group": "A"
+    },
+    {
+        "key": "BT",
+        "value": "Barletta",
+        "group": "B"
+    },
+    {
+        "key": "BL",
+        "value": "Belluno",
+        "group": "B"
+    },
+    {
+        "key": "VE",
+        "value": "Venezia",
+        "group": "V"
+    }
+]

@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { FormField, IInputField } from '../../../models';
+import { IInputField } from '../../../models';
 
 @Component({
     selector: 'df-field-input',

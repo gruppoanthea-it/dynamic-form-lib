@@ -1,7 +1,10 @@
-import { ValueOption, ISelectField } from '../../../models/form-struct/form-field.interface';
+import { ValueOption, ISelectField } from '../../../models/struct/form-field.interface';
 import { Component, OnInit, Input } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Observable, of } from 'rxjs';
+import { ValueOptionRetrieve } from '../../../models';
+import { DynamicFormService } from '../../../services/dynamic-form.service';
+import { HttpEventType } from '@angular/common/http';
 
 @Component({
     selector: 'df-field-select',
@@ -46,25 +49,38 @@ export class FieldSelectComponent implements OnInit {
     private values: ValueOption[];
     private valuesAsync: Observable<ValueOption[]>;
 
-    constructor() {
+    constructor(private formService: DynamicFormService) {
         this.groups = [];
         this.values = [];
         this.errors = [];
     }
 
     ngOnInit() {
+        if (!this.field.options) {
+            this.formService.retrieveOptions(this.field.name)
+                .subscribe(value => {
+                    if (value.type === HttpEventType.Response) {
+                        this.initOptions(value.body as ValueOption[]);
+                    }
+                });
+        } else {
+            this.initOptions(this.field.options);
+        }
+    }
+
+    private initOptions(options: ValueOption[]) {
         if (!this.field.multiple) {
             this.values.push({
                 key: '',
                 value: this.field.emptyText || '*** NESSUN VALORE ***'
             });
         }
-        if (this.field.options) {
-            const optWithGroup = this.field.options.filter((value) => {
+        if (options) {
+            const optWithGroup = options.filter((value) => {
                 return value.group && value.group.length > 0;
             });
             if (optWithGroup && optWithGroup.length > 0) {
-                this.field.options.forEach((value) => {
+                options.forEach((value) => {
                     let group = this.groups.find((val) => {
                         return val.name === value.group;
                     });
@@ -79,25 +95,12 @@ export class FieldSelectComponent implements OnInit {
                 });
                 this.groupsAsync = of(this._filterGroup(''));
             } else {
-                this.field.options.forEach((value) => {
+                options.forEach((value) => {
                     this.values.push(value);
                 });
                 this.valuesAsync = of(this._filter(this.values, ''));
             }
         }
-
-        // if (this.field.validators) {
-        //     const validators = [];
-        //     this.field.validators.forEach((validator) => {
-        //         validators.push(validator.validator);
-        //     });
-        //     if (validators.length > 0) {
-        //         this.control.valueChanges.subscribe((value) => {
-        //             this.validate();
-        //         });
-        //         this.control.setValidators(validators);
-        //     }
-        // }
     }
 
     private compareFunction(o1: string, o2: string) {

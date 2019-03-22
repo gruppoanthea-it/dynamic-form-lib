@@ -12,4 +12,4 @@ export interface ImageField extends BaseListField {
     base64?: string;
 }
 
-export type ListField = ImageField;
+export type ListField = BaseListField | ImageField;

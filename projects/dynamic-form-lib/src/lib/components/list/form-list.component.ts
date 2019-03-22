@@ -1,12 +1,11 @@
 import { getAllItems, getUiState, getListSchema } from './../../reducers/selectors';
 import { LibraryState } from './../../models/store.interface';
 import { Component, OnInit } from '@angular/core';
-import { MediaObserver } from '@angular/flex-layout';
 import { Struct, List } from '../../models';
 import { Store, select } from '@ngrx/store';
-import { getSchema } from '../../reducers/selectors';
 import { UiChangeRow } from '../../actions/ui.actions';
 import { Entity } from '../../models/common.interface';
+import { DispatcherService } from '../../dispatcher.service';
 
 @Component({
     selector: 'df-form-list',
@@ -14,7 +13,7 @@ import { Entity } from '../../models/common.interface';
     <div style="overflow: auto; height: 100%">
         <table mat-table [dataSource]="data" class="mat-elevation-z8">
             <ng-container *ngFor="let field of struct.fields" [matColumnDef]="field.name">
-                <th mat-header-cell *matHeaderCellDef>{{field.label || field.placeholder}}</th>
+                <th mat-header-cell *matHeaderCellDef>{{field.header}}</th>
                 <td mat-cell *matCellDef="let element"> {{element.data[field.name]}} </td>
             </ng-container>
             <tr mat-header-row *matHeaderRowDef="columns; sticky: true"></tr>
@@ -40,23 +39,24 @@ export class FormListComponent implements OnInit {
     private columns: string[];
     private selectedKey: string;
 
-    constructor(private store: Store<LibraryState>) {
+    constructor(private store: Store<LibraryState>,
+        private dispatchService: DispatcherService) {
         this.columns = [];
     }
 
     ngOnInit() {
-        this.store.pipe(select(getListSchema))
-            .subscribe((value) => {
+        this.dispatchService.getSelector(getListSchema)
+            .subscribe((value: List) => {
                 if (value) {
                     this.struct = value;
                     this.init();
                 }
             });
-        this.store.pipe(select(getAllItems))
+        this.dispatchService.getSelector(getAllItems)
             .subscribe(value => {
                 this.data = value;
             });
-        this.store.pipe(select(getUiState))
+        this.dispatchService.getSelector(getUiState)
             .subscribe(value => {
                 this.selectedKey = value.selectedKey;
             });
@@ -69,7 +69,7 @@ export class FormListComponent implements OnInit {
     }
 
     rowClicked(row: Entity) {
-        this.store.dispatch(new UiChangeRow(row.Id));
+        this.dispatchService.dispatchAction(new UiChangeRow(row.Id));
     }
 
 }

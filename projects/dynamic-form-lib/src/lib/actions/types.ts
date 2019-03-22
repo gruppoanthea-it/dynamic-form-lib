@@ -2,6 +2,7 @@ import { Action } from '@ngrx/store';
 
 export enum ActionTypes {
     VOID = 'VOID',
+    NEW_FORM = 'NEW_FORM',
     EVENT = 'EVENT',
     EVENT_RESULT = 'EVENT_RESULT',
     // UI
@@ -18,9 +19,19 @@ export enum ActionTypes {
     DATA_UPDATE = 'DATA_UPDATE',
     DATA_INSERT = 'DATA_INSERT',
     DATA_DELETE = 'DATA_DELETE',
-    DATA_RESET = 'DATA_RESET'
+    DATA_RESET = 'DATA_RESET',
+    DATA_SAVE = 'DATA_SAVE'
 }
 
-export class ActionVoid implements Action {
+export class BaseAction {
+    formId: string;
+}
+
+export class ActionVoid extends BaseAction implements Action {
     readonly type = ActionTypes.VOID;
+}
+
+export class NewFormAction extends BaseAction implements Action {
+    readonly type = ActionTypes.NEW_FORM;
+    constructor(public formId: string) { super(); }
 }

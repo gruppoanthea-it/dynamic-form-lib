@@ -23,6 +23,7 @@ import { FormListComponent } from './components/list/form-list.component';
 import { EffectsModule } from '@ngrx/effects';
 import { SchemaEffects } from './effects/schema.effect';
 import { EventsEffects } from './effects/events.effects';
+import { FormFooterComponent } from './components/footer/footer.component';
 
 
 @NgModule({
@@ -36,7 +37,8 @@ import { EventsEffects } from './effects/events.effects';
     FieldRadioComponent,
     FieldAutoCompleteComponent,
     FieldSelectComponent,
-    FormListComponent
+    FormListComponent,
+    FormFooterComponent
 ],
   imports: [
       BrowserModule,

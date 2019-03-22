@@ -1,29 +1,30 @@
-import { EntityData } from './../models/store.interface';
 import { DataActions } from './../actions/data.actions';
 import { ActionTypes } from '../actions/types';
-import { deepCopy, equals } from '../utility/utility.functions';
+import { deepCopy, equals, mergeChanges } from '../utility/utility.functions';
 import { Entity } from '../models/common.interface';
+import { EntityData, Paging } from '../models/store.interface';
 
-const initialState: EntityData = {
-    loading: false,
-    loaded: false,
-    items: null,
-    changes: new Map()
+const defaultPaging: Paging = {
+    ElementiTotali: 0,
+    ElementiPerPagina: 15,
+    NumeroPagina: 1,
+    PagineTotali: 0
 };
 
-export function reducerData(state = initialState, action: DataActions) {
+export function reducerData(state: EntityData, action: DataActions) {
   switch (action.type) {
     case ActionTypes.DATA_FETCH:
         if (state.loading) {
             return state;
         }
-        return {...state, loading: true, loaded: false, items: null, changes: new Map()};
+        return {...state, loading: true, loaded: false, items: null, changes: new Map(),
+        paging: defaultPaging};
     case ActionTypes.DATA_SUCCESS:
         if (state.loaded) {
             return state;
         }
         return {...state, loading: false, loaded: true, items: action.items,
-             changes: new Map()};
+             changes: new Map(), paging: action.paging};
     case ActionTypes.DATA_UPDATE:
         if (!state.loaded) {
             return state;
@@ -31,6 +32,9 @@ export function reducerData(state = initialState, action: DataActions) {
         const original = state.items.get(action.item.Id);
         const changed = !equals(original ? original.data : null, action.item.data);
         const change = new Map(state.changes);
+        if (!action.item.Deleted && !action.item.Inserted) {
+            action.item.Updated = changed;
+        }
         if (changed) {
             change.set(action.item.Id, action.item);
         } else {
@@ -69,6 +73,12 @@ export function reducerData(state = initialState, action: DataActions) {
             change1.set(item.Id, item);
         }
         return {...state, changes: change1};
+    case ActionTypes.DATA_SAVE:
+        if (!state.loaded) {
+            return state;
+        }
+        const newItems = mergeChanges(state.items, state.changes, true);
+        return {...state, items: newItems, changes: new Map()};
     default:
       return state;
   }
