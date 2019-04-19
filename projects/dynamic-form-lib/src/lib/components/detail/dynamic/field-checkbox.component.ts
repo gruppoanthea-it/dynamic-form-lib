@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ICheckBoxField } from '../../../models';
 
@@ -9,20 +9,10 @@ import { ICheckBoxField } from '../../../models';
     `,
     styles: []
 })
-export class FieldCheckBoxComponent implements OnInit {
+export class FieldCheckBoxComponent {
 
     @Input() field: ICheckBoxField;
     @Input() control: FormControl;
 
-    private errors: string[];
-    private value: any;
-    private fieldInputType: string;
-
-    constructor() {
-        this.errors = [];
-    }
-
-    ngOnInit() {
-
-    }
+    constructor() {}
 }

@@ -1,4 +1,3 @@
-import { ValueOptionRetrieve } from '../valueoption.retrieve';
 import { Grid } from '../common.interface';
 
 export interface BaseFormField {
@@ -8,10 +7,14 @@ export interface BaseFormField {
     label?: string;
     placeholder?: string;
     grid?: Grid;
+    validators?: IFieldError[];
 }
 
 export interface IFieldError {
-    validator: 'required' | string;
+    validator: 'min' | 'max' | 'required' | 'requiredTrue' | 'email' | 'minLength' |
+                'maxLength' | 'pattern' | 'custom';
+    params?: any;
+    async: boolean; // Used for custom validators
     key: string;
     message: string;
     priority: number;
@@ -28,7 +31,6 @@ export interface IInputField extends BaseFormField {
     | 'password' | 'search' | 'tel' | 'text' | 'time' | 'url' | 'week';
     maxLength?: number;
     hintText?: string;
-    validators?: IFieldError[];
 }
 
 export interface ICheckBoxField extends BaseFormField {
@@ -49,7 +51,6 @@ export interface ISelectField extends BaseFormField {
     multiple: boolean;
     hintText?: string;
     emptyText?: string;
-    validators?: IFieldError[];
     options?: ValueOption[];
 }
 

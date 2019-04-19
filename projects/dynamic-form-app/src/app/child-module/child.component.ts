@@ -1,23 +1,15 @@
-import { Component, OnInit, ViewChild, ViewContainerRef, Injector, NgModuleFactoryLoader, Type, Inject, ANALYZE_FOR_ENTRY_COMPONENTS } from '@angular/core';
+import { Component } from '@angular/core';
 import { SchemaRetrieve, DataRetrieve, ValueOptionRetrieve } from 'projects/dynamic-form-lib/src/public_api';
 import { EventOptions, EventInsert, EventReset, EventDelete, EventSave } from 'projects/dynamic-form-lib/src/lib/models/events.interface';
-import { ROUTES, Route } from '@angular/router';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+    selector: 'app-child',
+    template: `
+        <df-dynamic-form [schemaRetrieve]="schemaRetrieve" 
+            [dataRetrieve]="dataRetrieve" [eventOptions]="eventOptions" [valueOptionRetrieve]="valueOptionRetrieve"></df-dynamic-form>
+    `
 })
-export class AppComponent implements OnInit {
-
-    @ViewChild('container', {
-        read: ViewContainerRef
-    }) container: ViewContainerRef;
-
-    constructor(private loader: NgModuleFactoryLoader,  private injector: Injector, @Inject(ROUTES) private paths: Route[][]) {}
-
-    title = 'dynamic-form-app';
-
+export class ChildComponent {
     schemaRetrieve = new SchemaRetrieve({
         url: location + '/assets/json/schema.json',
         method: 'get',
@@ -83,16 +75,4 @@ export class AppComponent implements OnInit {
             console.log(event);
         }
     };
-
-    ngOnInit() {
-        const paths = this.paths.reduce((a, b) => a.concat(b));
-        this.loader.load(paths[0].loadChildren as string)
-            .then(factory => {
-                const mod = factory.create(this.injector);
-                const compType = mod.injector.get('ENTRY_POINT') as Type<any>;
-                const compFact = mod.componentFactoryResolver.resolveComponentFactory(compType);
-                const comp = this.container.createComponent(compFact);
-            })
-            .catch(err => console.log(err));
-    }
 }

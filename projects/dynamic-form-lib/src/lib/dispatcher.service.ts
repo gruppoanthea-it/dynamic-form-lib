@@ -3,7 +3,6 @@ import { LibraryState } from './models/store.interface';
 import { Store, Action, select, MemoizedSelectorWithProps } from '@ngrx/store';
 import { UUID } from 'angular2-uuid';
 import { BaseAction, NewFormAction } from './actions/types';
-import { Observable } from 'rxjs';
 
 @Injectable()
 export class DispatcherService {

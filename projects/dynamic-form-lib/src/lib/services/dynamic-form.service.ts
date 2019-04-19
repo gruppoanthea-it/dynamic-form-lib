@@ -4,8 +4,6 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { EventBase } from '../models/events.interface';
 import { ValueOptionRetrieve } from '../models';
-import { Paging } from '../models/store.interface';
-import { stringToKeyValue } from '@angular/flex-layout/extended/typings/style/style-transforms';
 
 @Injectable({
     providedIn: 'root'

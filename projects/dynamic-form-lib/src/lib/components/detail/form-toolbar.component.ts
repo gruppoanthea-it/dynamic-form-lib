@@ -18,7 +18,6 @@ import { DispatcherService } from '../../dispatcher.service';
             <mat-toolbar-row>
                 <div class="title-container">
                     <span>{{struct.displayOptions.caption}}</span>
-                    <span class="row-count">Riga {{currentIndex || 0}} di {{(totalCount$ | async) || 0}}</span>
                 </div>
                 <div fxHide.gt-xs="true" style="flex: 1 auto"></div>
                 <button fxHide.gt-xs="true" mat-icon-button [matMenuTriggerFor]="formMenu">
@@ -82,15 +81,6 @@ import { DispatcherService } from '../../dispatcher.service';
             content: '';
             position: absolute;
         }
-        .title-container {
-            display: flex;
-            flex-flow: column;
-            height: 100%;
-        }
-        .row-count {
-            font-weight: 400;
-            font-size: .9rem;
-        }
     `]
 })
 export class FormToolbarComponent implements OnInit {
@@ -100,7 +90,6 @@ export class FormToolbarComponent implements OnInit {
     private isFormModified$: Observable<boolean>;
     private struct$: Observable<Struct>;
     private currentIndex: number;
-    private totalCount$: Observable<number>;
 
     // Only to do next and prev
     private data: Entity[];
@@ -113,7 +102,6 @@ export class FormToolbarComponent implements OnInit {
     ngOnInit() {
         this.dispatchService.getSelector(getCurrentIndex)
             .subscribe(value => this.currentIndex = value);
-        this.totalCount$ = this.dispatchService.getSelector(getItemsCount);
         this.struct$ = this.dispatchService.getSelector(getSchema).pipe(map(value => value.item));
         this.isFormModified$ = this.dispatchService.getSelector(getDataChanged);
         this.dispatchService.getSelector(getAllItems)

@@ -10,3 +10,9 @@ export class InvalidSchemaRetrieveError extends Error {
         super(error);
     }
 }
+
+export class InvalidParamsError extends Error {
+    constructor(error: string) {
+        super(error);
+    }
+}

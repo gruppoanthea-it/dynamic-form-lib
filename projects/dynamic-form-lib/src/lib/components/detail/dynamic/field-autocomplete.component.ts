@@ -1,10 +1,11 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { IAutoCompleteField, ValueOption, ValueOptionRetrieve } from '../../../models';
+import { IAutoCompleteField, ValueOption } from '../../../models';
 import { Observable } from 'rxjs';
 import {startWith, map} from 'rxjs/operators';
 import { DynamicFormService } from '../../../services/dynamic-form.service';
 import { HttpEventType } from '@angular/common/http';
+import { ValidationField } from './validation.field';
+import { ConfigOptions } from '../../../config.options';
 
 @Component({
     selector: 'df-field-autocomplete',
@@ -30,10 +31,9 @@ import { HttpEventType } from '@angular/common/http';
     `,
     styles: []
 })
-export class FieldAutoCompleteComponent implements OnInit {
+export class FieldAutoCompleteComponent extends ValidationField implements OnInit {
 
     @Input() field: IAutoCompleteField;
-    @Input() control: FormControl;
 
     private errors: string[];
     private groups: GroupedOptions[];
@@ -41,13 +41,16 @@ export class FieldAutoCompleteComponent implements OnInit {
     private values: ValueOption[];
     private valuesAsync: Observable<ValueOption[]>;
 
-    constructor(private formService: DynamicFormService) {
+    constructor(private formService: DynamicFormService,
+                private configService: ConfigOptions) {
+        super(configService.getConfig());
         this.groups = [];
         this.values = [];
         this.errors = [];
     }
 
     ngOnInit() {
+        super.ngOnInit();
         if (!this.field.options) {
             this.formService.retrieveOptions(this.field.name)
                 .subscribe(value => {
@@ -116,20 +119,9 @@ export class FieldAutoCompleteComponent implements OnInit {
         return [];
     }
 
-    private validate() {
-        if (this.control.invalid && (this.control.dirty || this.control.touched)) {
-            this.errors.splice(0);
-            for (const key in this.control.errors) {
-                if (this.control.errors[key]) {
-                    const error = this.field.validators.find((val) => {
-                        return val.key === key;
-                    });
-                    if (error) {
-                        this.errors.push(error.message);
-                    }
-                }
-            }
-        }
+    errorChanges(errors: string[]) {
+        this.errors.splice(0, this.errors.length);
+        this.errors.push(...errors);
     }
 }
 

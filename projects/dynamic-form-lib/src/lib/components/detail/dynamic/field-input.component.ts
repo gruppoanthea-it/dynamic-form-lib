@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { FormControl } from '@angular/forms';
 import { IInputField } from '../../../models';
+import { ValidationField } from './validation.field';
+import { ConfigOptions } from '../../../config.options';
 
 @Component({
     selector: 'df-field-input',
@@ -22,48 +23,25 @@ import { IInputField } from '../../../models';
     `,
     styles: []
 })
-export class FieldInputComponent implements OnInit {
+export class FieldInputComponent extends ValidationField implements OnInit {
 
     @Input() field: IInputField;
-    @Input() control: FormControl;
 
     private errors: string[];
-    private value: any;
-    private fieldInputType: string;
+    private fieldInputType: string; // Hold the reference to type when switching between text and password
 
-    constructor() {
+    constructor(private configService: ConfigOptions) {
+        super(configService.getConfig());
         this.errors = [];
     }
 
     ngOnInit() {
+        super.ngOnInit();
         this.fieldInputType = this.field.inputType;
-            // if (this.field.validators) {
-            //     const validators = [];
-            //     this.field.validators.forEach((validator) => {
-            //         validators.push(validator.validator);
-            //     });
-            //     if (validators.length > 0) {
-            //         this.control.valueChanges.subscribe((value) => {
-            //             this.validate();
-            //         });
-            //         this.control.setValidators(validators);
-            //     }
-            // }
     }
 
-    private validate() {
-        if (this.control.invalid && (this.control.dirty || this.control.touched)) {
-            this.errors.splice(0);
-            for (const key in this.control.errors) {
-                if (this.control.errors[key]) {
-                    const error = this.field.validators.find((val) => {
-                        return val.key === key;
-                    });
-                    if (error) {
-                        this.errors.push(error.message);
-                    }
-                }
-            }
-        }
+    errorChanges(errors: string[]) {
+        this.errors.splice(0, this.errors.length);
+        this.errors.push(...errors);
     }
 }

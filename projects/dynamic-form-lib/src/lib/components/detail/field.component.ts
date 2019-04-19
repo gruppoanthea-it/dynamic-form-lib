@@ -30,9 +30,9 @@ export class FieldComponent implements OnInit {
 
     ngOnInit() {
         this.dynamicDom.setRootViewContainerRef(this.viewContainerRef);
-        let component: Type<{}>;
+        let component: Type<any> | string;
         if (this.field.component) {
-            // component = this.field.component;
+            component = this.field.component;
         } else {
             switch (this.field.type) {
                 case 'input':

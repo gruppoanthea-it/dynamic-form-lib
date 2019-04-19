@@ -1,10 +1,8 @@
 import { getSchema, getSelectedItem, getDataEntity } from './../../reducers/selectors';
 import { Component, OnInit} from '@angular/core';
-import { Store, select } from '@ngrx/store';
 import { FormGroup, FormControl } from '@angular/forms';
 import { MediaObserver, MediaChange } from '@angular/flex-layout';
 import { Struct } from '../../models';
-import { LibraryState } from '../../models/store.interface';
 import { DataUpdate } from '../../actions/data.actions';
 import { Entity } from '../../models/common.interface';
 import { DispatcherService } from '../../dispatcher.service';
@@ -39,7 +37,6 @@ export class FormDetailComponent implements OnInit {
     private currentBP: string;
 
     constructor(private mediaObserver: MediaObserver,
-         private store: Store<LibraryState>,
          private dispatchService: DispatcherService) {
         this.mediaObserver.media$.subscribe((media: MediaChange) => {
             this.currentBP = media.mqAlias;
@@ -130,15 +127,13 @@ export class FormDetailComponent implements OnInit {
         });
     }
 
-    resetForm() {
+    private resetForm() {
         this.stopPropagation = true;
         for (const key in this.form.controls) {
             if (this.form.controls.hasOwnProperty(key)) {
                 this.form.controls[key].setValue(this.data.data[key]);
             }
         }
-        // this.store.dispatch(new DetailReset(false));
-        // this.store.dispatch(new DetailUpdated(false));
         this.stopPropagation = false;
     }
 }

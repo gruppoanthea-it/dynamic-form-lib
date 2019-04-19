@@ -14,6 +14,7 @@ import { EventResult } from './actions/events.actions';
 import { DispatcherService } from './dispatcher.service';
 import { ValueOptionRetrieve } from './models';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ConfigOptions } from './config.options';
 
 @Component({
   selector: 'df-dynamic-form',
@@ -73,7 +74,8 @@ export class DynamicFormLibComponent implements OnInit {
     constructor(private store: Store<LibraryState>,
         private formService: DynamicFormService,
         private dispatcherService: DispatcherService,
-        private snackBar: MatSnackBar) {
+        private snackBar: MatSnackBar,
+        private configService: ConfigOptions) {
         this.loadingSchema = false;
         this.schemaLoaded = false;
     }

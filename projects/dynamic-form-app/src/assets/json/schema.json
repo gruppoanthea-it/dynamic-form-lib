@@ -15,14 +15,25 @@
                 "hintText": "Inserisci il tuo username",
                 "validators": [
                     {
-                        "validator": "Validators.required",
+                        "validator": "required",
                         "key": "required",
                         "message": "Lo username è obbligatorio",
                         "priority": 0
                     }
                 ],
                 "grid": {
-                    "lg": 12
+                    "lg": 6,
+                    "sm": 12
+
+                }
+            },
+            {
+                "name": "test",
+                "type": "custom",
+                "component": "custom",
+                "grid": {
+                    "lg": 6,
+                    "sm": 12
                 }
             },
             {
@@ -32,8 +43,9 @@
               "placeholder": "Password",
               "validators": [
                   {
-                      "validator": "Validators.required",
-                      "key": "required",
+                      "validator": "custom",
+                      "key": "custom",
+                      "async": true,
                       "message": "La password è obbligatoria",
                       "priority": 0
                   }
@@ -76,9 +88,10 @@
               "type": "autocomplete",
               "inputType": "text",
               "placeholder": "Autocomplete",
+              "maxLength": 100,
               "validators": [
                   {
-                      "validator": "Validators.required",
+                      "validator": "required",
                       "key": "required",
                       "message": "È necessario inserire un valore",
                       "priority": 0

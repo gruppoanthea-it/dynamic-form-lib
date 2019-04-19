@@ -42,20 +42,10 @@ import { IRadioField } from '../../../models';
         `
     ]
 })
-export class FieldRadioComponent implements OnInit {
+export class FieldRadioComponent {
 
     @Input() field: IRadioField;
     @Input() control: FormControl;
 
-    private errors: string[];
-    private value: any;
-    private fieldInputType: string;
-
-    constructor() {
-        this.errors = [];
-    }
-
-    ngOnInit() {
-
-    }
+    constructor() {}
 }
