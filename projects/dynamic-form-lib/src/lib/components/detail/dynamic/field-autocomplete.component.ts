@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { IAutoCompleteField, ValueOption } from '../../../models';
 import { Observable } from 'rxjs';
-import {startWith, map} from 'rxjs/operators';
+import {startWith, map, debounceTime, filter} from 'rxjs/operators';
 import { DynamicFormService } from '../../../services/dynamic-form.service';
 import { HttpEventType } from '@angular/common/http';
 import { ValidationField } from './validation.field';
@@ -51,11 +51,40 @@ export class FieldAutoCompleteComponent extends ValidationField implements OnIni
 
     ngOnInit() {
         super.ngOnInit();
+        this.loadOptions();
+        if (this.field.requestOnChange) {
+            if (this.field.linkedFields) {
+                const form = this.control.parent;
+                const linkedFields = this.field.linkedFields.split(',');
+                linkedFields.forEach(el => {
+                    const linked = form.get(el);
+                    if (linked) {
+                        linked.valueChanges.pipe(debounceTime(this.field.debounceOnLinked || 0))
+                            .subscribe(() => this.loadOptions());
+                    }
+                    this.control.valueChanges.pipe(debounceTime(this.field.debounce || 0))
+                            .subscribe((value) => {
+                                if (this.field.minDigits && value.length < this.field.minDigits) {
+                                    this.clearOptions();
+                                    return;
+                                }
+                                this.loadOptions();
+                            });
+                });
+            }
+        }
+    }
+
+    loadOptions() {
         if (!this.field.options) {
-            this.formService.retrieveOptions(this.field.name)
+            this.formService.retrieveOptions(this.field.name, this.control.parent.value)
                 .subscribe(value => {
-                    if (value.type === HttpEventType.Response) {
-                        this.initOptions(value.body as ValueOption[]);
+                    if (value.request.type === HttpEventType.Response) {
+                        let values: ValueOption[] = value.request.body as ValueOption[];
+                        if (value.cb) {
+                            values = value.cb(null, values, this.control.parent.value);
+                        }
+                        this.initOptions(values);
                     }
                 });
         } else {
@@ -63,8 +92,14 @@ export class FieldAutoCompleteComponent extends ValidationField implements OnIni
         }
     }
 
+    private clearOptions() {
+        this.groups.splice(0, this.groups.length);
+        this.values.splice(0, this.values.length);
+    }
+
     private initOptions(options: ValueOption[]) {
         if (options) {
+            this.clearOptions();
             const optWithGroup = options.filter((value) => {
                 return value.group && value.group.length > 0;
             });
@@ -83,20 +118,19 @@ export class FieldAutoCompleteComponent extends ValidationField implements OnIni
                     group.options.push(value);
                 });
                 this.groupsAsync = this.control.valueChanges
-                  .pipe(
-                    startWith(''),
-                    map(value => this._filterGroup(value))
-                  );
+                    .pipe(
+                      startWith(''),
+                      map(value => this._filterGroup(value))
+                    );
             } else {
                 options.forEach((value) => {
                     this.values.push(value);
                 });
-
                 this.valuesAsync = this.control.valueChanges
-                  .pipe(
-                    startWith(''),
-                    map(value => this._filter(this.values, value))
-                  );
+                    .pipe(
+                      startWith(''),
+                      map(value => this._filter(this.values, value))
+                    );
             }
         }
     }

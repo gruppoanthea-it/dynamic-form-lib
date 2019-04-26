@@ -151,7 +151,7 @@ export class DynamicFormLibComponent implements OnInit {
             ? 0 : 1;
     }
 
-    onChangeView() {
+    private onChangeView() {
         if (this.tabIndex === 0) {
             this.tabIndex = 1;
         } else {
@@ -159,7 +159,7 @@ export class DynamicFormLibComponent implements OnInit {
         }
     }
 
-    onSwipe(evt) {
+    private onSwipe(evt) {
         const x = Math.abs(evt.deltaX) > 40 ? (evt.deltaX > 0 ? 'right' : 'left') : '';
         if (x === 'right' && this.tabIndex === 1) {
             this.onChangeView();
@@ -169,11 +169,15 @@ export class DynamicFormLibComponent implements OnInit {
         }
     }
 
-    showError(error: string) {
+    private showError(error: string) {
         this.snackBar.open(error, null, {
             duration: 5000,
             horizontalPosition: 'right',
             verticalPosition: 'top'
         });
+    }
+
+    reloadData() {
+        this.dispatcherService.dispatchAction(new DataFetch(this.dataRetrieve));
     }
 }

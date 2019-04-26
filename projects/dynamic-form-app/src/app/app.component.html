@@ -1,8 +1,9 @@
 <!--The content below is only a placeholder and can be replaced.-->
 <div style="width: 100%">
-    <df-dynamic-form [schemaRetrieve]="schemaRetrieve" 
+    <df-dynamic-form #myForm [schemaRetrieve]="schemaRetrieve" 
     [dataRetrieve]="dataRetrieve" [eventOptions]="eventOptions" [valueOptionRetrieve]="valueOptionRetrieve"></df-dynamic-form>
 </div>
 <div style="width: 100%">
-    <ng-template #container></ng-template>
+    <!-- <ng-template #container></ng-template> -->
+    <button (click)="reloadData()"> Reload</button>
 </div>

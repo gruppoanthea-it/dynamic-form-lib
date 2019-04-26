@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { EventBase } from '../models/events.interface';
 import { ValueOptionRetrieve } from '../models';
+import { map } from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root'
@@ -62,7 +63,7 @@ export class DynamicFormService {
         return this.http.request(dataRequestDef);
     }
 
-    retrieveOptions(fieldName: string) {
+    retrieveOptions(fieldName: string, formData?: any) {
         if (!this.valueOptionRetrieve.has(fieldName)) {
             return null;
         }
@@ -72,9 +73,14 @@ export class DynamicFormService {
                 headers: options.request.headers
             });
         if (options.onGetOptions) {
-            valueOptionRequest = options.onGetOptions(valueOptionRequest);
+            valueOptionRequest = options.onGetOptions(valueOptionRequest, formData);
         }
-        return this.http.request(valueOptionRequest);
+        return this.http.request(valueOptionRequest).pipe(map((req) => {
+            return {
+                request: req,
+                cb: options.afterGetOptions
+            };
+        }));
     }
 
     notifyCommand(event: EventBase) {

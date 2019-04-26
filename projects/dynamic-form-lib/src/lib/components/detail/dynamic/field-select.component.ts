@@ -5,6 +5,7 @@ import { Observable, of } from 'rxjs';
 import { ValueOptionRetrieve } from '../../../models';
 import { DynamicFormService } from '../../../services/dynamic-form.service';
 import { HttpEventType } from '@angular/common/http';
+import { debounceTime } from 'rxjs/operators';
 
 @Component({
     selector: 'df-field-select',
@@ -56,16 +57,42 @@ export class FieldSelectComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.loadOptions();
+        if (this.field.requestOnChange) {
+            if (this.field.linkedFields) {
+                const form = this.control.parent;
+                const linkedFields = this.field.linkedFields.split(',');
+                linkedFields.forEach(el => {
+                    const linked = form.get(el);
+                    if (linked) {
+                        linked.valueChanges.pipe(debounceTime(this.field.debounceOnLinked || 0))
+                            .subscribe(() => this.loadOptions());
+                    }
+                });
+            }
+        }
+    }
+
+    loadOptions() {
         if (!this.field.options) {
-            this.formService.retrieveOptions(this.field.name)
+            this.formService.retrieveOptions(this.field.name, this.control.parent.value)
                 .subscribe(value => {
-                    if (value.type === HttpEventType.Response) {
-                        this.initOptions(value.body as ValueOption[]);
+                    if (value.request.type === HttpEventType.Response) {
+                        let values: ValueOption[] = value.request.body as ValueOption[];
+                        if (value.cb) {
+                            values = value.cb(null, values, this.control.parent.value);
+                        }
+                        this.initOptions(values);
                     }
                 });
         } else {
             this.initOptions(this.field.options);
         }
+    }
+
+    private clearOptions() {
+        this.groups.splice(0, this.groups.length);
+        this.values.splice(0, this.values.length);
     }
 
     private initOptions(options: ValueOption[]) {
@@ -76,6 +103,7 @@ export class FieldSelectComponent implements OnInit {
             });
         }
         if (options) {
+            this.clearOptions();
             const optWithGroup = options.filter((value) => {
                 return value.group && value.group.length > 0;
             });

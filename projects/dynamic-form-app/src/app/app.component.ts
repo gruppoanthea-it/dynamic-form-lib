@@ -1,7 +1,8 @@
 import { Component, OnInit, ViewChild, ViewContainerRef, Injector, NgModuleFactoryLoader, Type, Inject, ANALYZE_FOR_ENTRY_COMPONENTS } from '@angular/core';
-import { SchemaRetrieve, DataRetrieve, ValueOptionRetrieve } from 'projects/dynamic-form-lib/src/public_api';
+import { SchemaRetrieve, DataRetrieve, ValueOptionRetrieve, DynamicFormLibComponent } from 'projects/dynamic-form-lib/src/public_api';
 import { EventOptions, EventInsert, EventReset, EventDelete, EventSave } from 'projects/dynamic-form-lib/src/lib/models/events.interface';
 import { ROUTES, Route } from '@angular/router';
+import { AstMemoryEfficientTransformer } from '@angular/compiler';
 
 @Component({
   selector: 'app-root',
@@ -13,6 +14,8 @@ export class AppComponent implements OnInit {
     @ViewChild('container', {
         read: ViewContainerRef
     }) container: ViewContainerRef;
+
+    @ViewChild('myForm') myForm: DynamicFormLibComponent;
 
     constructor(private loader: NgModuleFactoryLoader,  private injector: Injector, @Inject(ROUTES) private paths: Route[][]) {}
 
@@ -62,10 +65,22 @@ export class AppComponent implements OnInit {
         ['select',  new ValueOptionRetrieve({
             url: location + '/assets/json/valueoption.json',
             method: 'get',
+        }, null, (err, body, formdata) => {
+            console.log(formdata);
+            return body.filter(el => {
+                return formdata.check ? el.value.startsWith('A') : el.value.startsWith('B');
+            });
         })],
         ['autocomplete',  new ValueOptionRetrieve({
             url: location + '/assets/json/valueoption.json',
             method: 'get'
+        }, null, (err, body, formdata) => {
+            if (!formdata.autocomplete || formdata.autocomplete.length === 0) {
+                return body;
+            }
+            return body.filter(el => {
+                return el.value.indexOf(formdata.autocomplete) >= 0;
+            });
         })],
     ]);
 
@@ -85,6 +100,7 @@ export class AppComponent implements OnInit {
     };
 
     ngOnInit() {
+        /*
         const paths = this.paths.reduce((a, b) => a.concat(b));
         this.loader.load(paths[0].loadChildren as string)
             .then(factory => {
@@ -94,5 +110,10 @@ export class AppComponent implements OnInit {
                 const comp = this.container.createComponent(compFact);
             })
             .catch(err => console.log(err));
+        */
+    }
+
+    reloadData() {
+        this.myForm.reloadData();
     }
 }

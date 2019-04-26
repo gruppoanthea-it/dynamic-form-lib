@@ -44,13 +44,22 @@ export interface IRadioField extends BaseFormField {
 }
 
 export interface IAutoCompleteField extends IInputField {
+    requestOnChange?: boolean;
+    debounce?: number;
+    linkedFields?: string;
+    debounceOnLinked?: number;
+    minDigits?: number;
     options?: ValueOption[];
 }
 
 export interface ISelectField extends BaseFormField {
+    requestOnChange?: boolean;
     multiple: boolean;
     hintText?: string;
     emptyText?: string;
+    debounce?: number;
+    linkedFields?: string;
+    debounceOnLinked?: number;
     options?: ValueOption[];
 }
 

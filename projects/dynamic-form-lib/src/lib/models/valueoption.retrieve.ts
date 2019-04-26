@@ -6,8 +6,8 @@ import { ValueOption } from './struct/form-field.interface';
 
 export class ValueOptionRetrieve {
     constructor(public request?: RequestOptions,
-                public onGetOptions?: (request: HttpRequest<any>) => HttpRequest<any>,
-                public afterGetOptions?: (error: Error, body: ValueOption[]) => void) {
+                public onGetOptions?: (request: HttpRequest<any>, formData?: any) => HttpRequest<any>,
+                public afterGetOptions?: (error: Error, body: ValueOption[], formdata?: any) => ValueOption[]) {
                     if (!request) {
                         throw new InvalidSchemaRetrieveError('Request options is required');
                     }

@@ -30,7 +30,6 @@ export class FormDetailComponent implements OnInit {
     private data: Entity;
     private dataLoaded: boolean;
     private form: FormGroup;
-    private stopPropagation: boolean;
 
     private grids: any;
     private readonly breakPoints: string[] = ['xs', 'sm', 'md', 'lg', 'xl'];
@@ -42,7 +41,6 @@ export class FormDetailComponent implements OnInit {
             this.currentBP = media.mqAlias;
             this.adjustGrid();
         });
-        this.stopPropagation = false;
         this.dataLoaded = false;
     }
 
@@ -116,24 +114,22 @@ export class FormDetailComponent implements OnInit {
 
     private registerChanges() {
         this.form.valueChanges.subscribe((values) => {
-            if (!this.stopPropagation) {
-                for (const key in values) {
-                    if (values.hasOwnProperty(key)) {
-                        this.data.data[key] = values[key];
-                    }
+            for (const key in values) {
+                if (values.hasOwnProperty(key)) {
+                    this.data.data[key] = values[key];
                 }
-                this.dispatchService.dispatchAction(new DataUpdate(this.data));
             }
+            this.dispatchService.dispatchAction(new DataUpdate(this.data));
         });
     }
 
     private resetForm() {
-        this.stopPropagation = true;
         for (const key in this.form.controls) {
             if (this.form.controls.hasOwnProperty(key)) {
-                this.form.controls[key].setValue(this.data.data[key]);
+                this.form.controls[key].patchValue(this.data.data[key], {
+                    emitEvent: false
+                });
             }
         }
-        this.stopPropagation = false;
     }
 }
