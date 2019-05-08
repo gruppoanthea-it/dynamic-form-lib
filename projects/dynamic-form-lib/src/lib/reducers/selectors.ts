@@ -60,7 +60,7 @@ export const getAllItems = createSelector(
         if (!state) {
             return null;
         }
-        return [...state.values()];
+        return [...Array.from(state.values())];
     }
 );
 

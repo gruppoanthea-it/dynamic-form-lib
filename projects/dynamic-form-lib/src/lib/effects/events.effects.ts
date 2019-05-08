@@ -47,7 +47,7 @@ export class EventsEffects {
           changeRow.formId = action.formId;
           let rowKey = form.uiState.lastSelectedKey;
           const itemsMap = mergeChanges(form.storeData.data.items, form.storeData.data.changes, true);
-          const items = [...itemsMap.values()];
+          const items = [...Array.from(itemsMap.values())];
           if (!rowKey || !itemsMap.has(rowKey)) {
             if (items.length > 0) {
               let found = false;

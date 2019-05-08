@@ -1,4 +1,4 @@
-import { SchemaRetrieve, DataRetrieve } from 'projects/dynamic-form-lib/src/public_api';
+import { SchemaRetrieve, DataRetrieve } from '../models';
 import { HttpClient, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
